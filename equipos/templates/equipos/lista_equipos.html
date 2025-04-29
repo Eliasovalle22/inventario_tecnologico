@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Equipos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Inventario de Equipos</h2>
+        <a href="{% url 'crear_equipo' %}" class="btn btn-success">+ Nuevo Equipo</a>
+    </div>
+
+    <!-- Filtros -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label class="form-label">Sede</label>
+            <select name="sede" class="form-select">
+                <option value="">Todas</option>
+                {% for sede in sedes %}
+                    <option value="{{ sede.id }}" {% if filtros.sede == sede.id|stringformat:"s" %}selected{% endif %}>
+                        {{ sede.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Dependencia</label>
+            <select name="dependencia" class="form-select">
+                <option value="">Todas</option>
+                {% for dep in dependencias %}
+                    <option value="{{ dep.id }}" {% if filtros.dependencia == dep.id|stringformat:"s" %}selected{% endif %}>
+                        {{ dep.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Asignado a</label>
+            <input type="text" name="asignado_a" class="form-control" value="{{ filtros.asignado_a }}">
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+            <a href="{% url 'lista_equipos' %}" class="btn btn-secondary">Limpiar</a>
+        </div>
+    </form>
+
+    <!-- Tabla de equipos -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Sede</th>
+                    <th>Dependencia</th>
+                    <th>Salón</th>
+                    <th>Asignado a</th>
+                    <th>Fecha Compra</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equipo in equipos %}
+                    <tr>
+                        <td>{{ equipo.nombre }}</td>
+                        <td>{{ equipo.tipo }}</td>
+                        <td>{{ equipo.salon.dependencia.sede.nombre }}</td>
+                        <td>{{ equipo.salon.dependencia.nombre }}</td>
+                        <td>{{ equipo.salon.nombre }}</td>
+                        <td>{{ equipo.asignado_a }}</td>
+                        <td>{{ equipo.fecha_compra }}</td>
+                        <td>
+                            <a href="{% url 'detalle_equipo' equipo.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No hay equipos registrados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
