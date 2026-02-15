@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Asistente{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Dashboard Asistente</h1>
+    <p>Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Activos Disponibles</h5>
+                    <h2>{{ activos_disponibles }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Activos Asignados</h5>
+                    <h2>{{ activos_asignados }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Mis Asignaciones</h5>
+                    <h2>{{ mis_asignaciones }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

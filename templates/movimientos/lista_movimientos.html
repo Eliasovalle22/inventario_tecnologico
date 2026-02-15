@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Movimientos - Inventario TI{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-history"></i> Historial de Movimientos</h1>
+        {% if perms.movimientos.add_movimiento %}
+        <a href="{% url 'movimientos:crear' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Movimiento
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- KPIs Rápidos -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Movimientos</h5>
+                    <h2>{{ total_movimientos }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Movimientos Hoy</h5>
+                    <h2>{{ movimientos_hoy }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Distribución por Tipo</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tipo, count in tipos_count.items %}
+                        <span class="badge bg-info p-2">
+                            {{ tipo }}: {{ count }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-light py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-filter"></i> Filtrar Movimientos
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Fecha Desde</label>
+                    {{ filter_form.fecha_desde }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Fecha Hasta</label>
+                    {{ filter_form.fecha_hasta }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    {{ filter_form.tipo }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Activo</label>
+                    {{ filter_form.activo }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Usuario</label>
+                    {{ filter_form.usuario }}
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de Movimientos -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Activo</th>
+                            <th>Usuario</th>
+                            <th>Detalle</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movimiento in movimientos %}
+                        <tr>
+                            <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if movimiento.tipo == 'ENTRADA' %}bg-success
+                                    {% elif movimiento.tipo == 'SALIDA' %}bg-warning
+                                    {% elif movimiento.tipo == 'ASIGNACION' %}bg-primary
+                                    {% elif movimiento.tipo == 'DEVOLUCION' %}bg-info
+                                    {% elif movimiento.tipo == 'TRASLADO' %}bg-secondary
+                                    {% elif movimiento.tipo == 'REPARACION' %}bg-warning
+                                    {% elif movimiento.tipo == 'BAJA' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ movimiento.get_tipo_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong>{{ movimiento.activo.codigo }}</strong><br>
+                                <small>{{ movimiento.activo.marca.nombre }} {{ movimiento.activo.modelo }}</small>
+                            </td>
+                            <td>
+                                {% if movimiento.usuario %}
+                                    {{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}
+                                {% else %}
+                                    <span class="text-muted">Sistema</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if movimiento.ubicacion_destino %}
+                                    <i class="fas fa-map-marker-alt"></i> {{ movimiento.ubicacion_destino.nombre }}<br>
+                                {% endif %}
+                                {% if movimiento.estado_destino %}
+                                    <span class="badge" style="background-color: {{ movimiento.estado_destino.color }};">
+                                        {{ movimiento.estado_destino.nombre }}
+                                    </span><br>
+                                {% endif %}
+                                {% if movimiento.responsable_nuevo %}
+                                    <i class="fas fa-user"></i> {{ movimiento.responsable_nuevo.get_full_name }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'movimientos:detalle' movimiento.id %}"
+                                   class="btn btn-sm btn-info" title="Ver detalle">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td colspan="6" class="text-center">No hay movimientos registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if movimientos.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if movimientos.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movimientos.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            Anterior
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for i in movimientos.paginator.page_range %}
+                        {% if movimientos.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                {{ i }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if movimientos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movimientos.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            Siguiente
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

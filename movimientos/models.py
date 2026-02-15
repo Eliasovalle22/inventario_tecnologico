@@ -14,6 +14,7 @@ class Movimiento(models.Model):
         ('REPARACION', 'Envío a reparación'),
         ('BAJA', 'Dar de baja'),
         ('CAMBIO_ESTADO', 'Cambio de estado'),
+        ('ACTUALIZACION', 'Actualización de datos'),
     ]
     
     activo = models.ForeignKey(Activo, on_delete=models.PROTECT, related_name='movimientos')
@@ -79,6 +80,9 @@ class Movimiento(models.Model):
         related_name='movimientos'
     )
     
+    # Metadatos adicionales (para guardar datos específicos de cada movimiento)
+    metadata = models.JSONField(default=dict, blank=True, help_text="Datos adicionales en formato JSON")
+    
     class Meta:
         verbose_name = "Movimiento"
         verbose_name_plural = "Movimientos"
@@ -86,7 +90,17 @@ class Movimiento(models.Model):
         indexes = [
             models.Index(fields=['fecha']),
             models.Index(fields=['activo', 'fecha']),
+            models.Index(fields=['tipo']),
         ]
     
     def __str__(self):
-        return f"{self.get_tipo_display()} - {self.activo} - {self.fecha.date()}"
+        return f"{self.get_tipo_display()} - {self.activo.codigo} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            if not self.metadata:
+                self.metadata = {
+                    'ip_address': None,
+                    'user_agent': None,
+                }
+        super().save(*args, **kwargs)

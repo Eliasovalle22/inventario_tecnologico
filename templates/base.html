@@ -36,21 +36,27 @@
                             </a>
                         </li>
                         {% endif %}
-                        
+
                         {% if perms.asignaciones.view_asignacion %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-hand-holding"></i> Asignaciones
-                            </a>
-                        </li>
+                            {% url 'asignaciones:lista' as asignaciones_url %}
+                            {% if asignaciones_url %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'asignaciones:lista' %}">
+                                    <i class="fas fa-hand-holding"></i> Asignaciones
+                                </a>
+                            </li>
+                            {% endif %}
                         {% endif %}
-                        
+
                         {% if perms.movimientos.view_movimiento %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-history"></i> Movimientos
-                            </a>
-                        </li>
+                            {% url 'movimientos:lista' as movimientos_url %}
+                            {% if movimientos_url %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'movimientos:lista' %}">
+                                    <i class="fas fa-history"></i> Movimientos
+                                </a>
+                            </li>
+                            {% endif %}
                         {% endif %}
                         
                         {% if perms.catalogos.view_categoria or perms.catalogos.view_marca %}

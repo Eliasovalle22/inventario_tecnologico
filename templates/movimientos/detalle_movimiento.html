@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del Movimiento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header 
+                    {% if movimiento.tipo == 'ENTRADA' %}bg-success
+                    {% elif movimiento.tipo == 'SALIDA' %}bg-warning
+                    {% elif movimiento.tipo == 'ASIGNACION' %}bg-primary
+                    {% elif movimiento.tipo == 'DEVOLUCION' %}bg-info
+                    {% elif movimiento.tipo == 'TRASLADO' %}bg-secondary
+                    {% elif movimiento.tipo == 'REPARACION' %}bg-warning
+                    {% elif movimiento.tipo == 'BAJA' %}bg-danger
+                    {% else %}bg-secondary{% endif %} text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> 
+                        Detalle del Movimiento: {{ movimiento.get_tipo_display }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Información General</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>ID:</th>
+                                    <td>{{ movimiento.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha:</th>
+                                    <td>{{ movimiento.fecha|date:"d/m/Y H:i:s" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo:</th>
+                                    <td>
+                                        <span class="badge 
+                                            {% if movimiento.tipo == 'ENTRADA' %}bg-success
+                                            {% elif movimiento.tipo == 'SALIDA' %}bg-warning
+                                            {% elif movimiento.tipo == 'ASIGNACION' %}bg-primary
+                                            {% elif movimiento.tipo == 'DEVOLUCION' %}bg-info
+                                            {% elif movimiento.tipo == 'TRASLADO' %}bg-secondary
+                                            {% elif movimiento.tipo == 'REPARACION' %}bg-warning
+                                            {% elif movimiento.tipo == 'BAJA' %}bg-danger
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ movimiento.get_tipo_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Usuario:</th>
+                                    <td>
+                                        {% if movimiento.usuario %}
+                                            {{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}
+                                        {% else %}
+                                            <span class="text-muted">Sistema</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Activo Involucrado</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Código:</th>
+                                    <td>
+                                        <a href="{% url 'inventario:detalle' movimiento.activo.id %}">
+                                            {{ movimiento.activo.codigo }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Descripción:</th>
+                                    <td>{{ movimiento.activo.marca.nombre }} {{ movimiento.activo.modelo }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Serial:</th>
+                                    <td>{{ movimiento.activo.serial|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Estado Anterior</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Ubicación:</th>
+                                    <td>
+                                        {% if movimiento.ubicacion_origen %}
+                                            {{ movimiento.ubicacion_origen.nombre }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        {% if movimiento.estado_origen %}
+                                            <span class="badge" style="background-color: {{ movimiento.estado_origen.color }};">
+                                                {{ movimiento.estado_origen.nombre }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Responsable:</th>
+                                    <td>
+                                        {% if movimiento.responsable_anterior %}
+                                            {{ movimiento.responsable_anterior.get_full_name }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Estado Nuevo</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Ubicación:</th>
+                                    <td>
+                                        {% if movimiento.ubicacion_destino %}
+                                            <strong>{{ movimiento.ubicacion_destino.nombre }}</strong>
+                                        {% else %}
+                                            <span class="text-muted">Sin cambios</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        {% if movimiento.estado_destino %}
+                                            <span class="badge" style="background-color: {{ movimiento.estado_destino.color }};">
+                                                <strong>{{ movimiento.estado_destino.nombre }}</strong>
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">Sin cambios</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Responsable:</th>
+                                    <td>
+                                        {% if movimiento.responsable_nuevo %}
+                                            <strong>{{ movimiento.responsable_nuevo.get_full_name }}</strong>
+                                        {% else %}
+                                            <span class="text-muted">Sin cambios</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if movimiento.observaciones %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Observaciones:</h6>
+                            <div class="bg-light p-3 rounded">
+                                {{ movimiento.observaciones|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if movimiento.metadata %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Metadatos Adicionales:</h6>
+                            <pre class="bg-light p-3 rounded">{{ movimiento.metadata|pprint }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if movimiento.asignacion %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Asignación Relacionada:</h6>
+                            <p>
+                                <a href="{% url 'asignaciones:detalle' movimiento.asignacion.id %}" class="btn btn-sm btn-info">
+                                    Ver Asignación #{{ movimiento.asignacion.id }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'movimientos:lista' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a Movimientos
+                        </a>
+                        <a href="{% url 'inventario:detalle' movimiento.activo.id %}" class="btn btn-primary">
+                            <i class="fas fa-laptop"></i> Ver Activo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

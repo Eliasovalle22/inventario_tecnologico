@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from inventario.models import Activo
@@ -8,23 +8,19 @@ from catalogos.models import Estado
 
 @login_required
 def dashboard(request):
-    # Redirección basada en grupo
+    """Vista principal del dashboard - Redirige según el rol"""
     if request.user.is_superuser:
-        return dashboard_director(request)
+        return redirect('core:dashboard_director')
     elif request.user.groups.filter(name='DirectorTI').exists():
-        return dashboard_director(request)
+        return redirect('core:dashboard_director')
     elif request.user.groups.filter(name='Asistente').exists():
-        return dashboard_asistente(request)
+        return redirect('core:dashboard_asistente')
     else:
-        return dashboard_basico(request)
+        return redirect('core:dashboard_basico')
 
 @login_required
 def dashboard_director(request):
-    from inventario.models import Activo
-    from movimientos.models import Movimiento
-    from catalogos.models import Estado
-    
-    # Obtener KPIs con manejo de errores
+    """Dashboard para Directores TI y Superusuarios"""
     try:
         total_activos = Activo.objects.count()
     except:
@@ -55,12 +51,12 @@ def dashboard_director(request):
     # Activos recientes
     try:
         activos_recientes = Activo.objects.select_related(
-            'categoria', 'marca', 'estado'
+            'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
         ).order_by('-fecha_creacion')[:10]
     except:
         activos_recientes = []
     
-    # Gráficos
+    # Activos por categoría para el gráfico
     try:
         activos_por_categoria = Activo.objects.values(
             'categoria__nombre'
@@ -79,21 +75,30 @@ def dashboard_director(request):
 
 @login_required
 def dashboard_asistente(request):
-    # KPIs básicos para asistentes
-    activos_disponibles = Activo.objects.filter(estado__nombre='Disponible').count()
-    activos_asignados = Activo.objects.filter(estado__nombre='Asignado').count()
-    mis_asignaciones = Asignacion.objects.filter(
-        usuario_asignado=request.user,
-        activo_actual=True
-    ).count()
+    """Dashboard para Asistentes"""
+    try:
+        activos_disponibles = Activo.objects.filter(estado__nombre='Disponible').count()
+        activos_asignados = Activo.objects.filter(estado__nombre='Asignado').count()
+        mis_asignaciones = Asignacion.objects.filter(
+            usuario_asignado=request.user,
+            activo_actual=True
+        ).count()
+    except:
+        activos_disponibles = 0
+        activos_asignados = 0
+        mis_asignaciones = 0
     
-    # Últimos movimientos (limitado)
-    ultimos_movimientos = Movimiento.objects.filter(
-        usuario=request.user
-    ).select_related('activo').order_by('-fecha')[:10]
+    try:
+        ultimos_movimientos = Movimiento.objects.filter(
+            usuario=request.user
+        ).select_related('activo').order_by('-fecha')[:10]
+    except:
+        ultimos_movimientos = []
     
-    # Activos que puedo gestionar
-    activos_recientes = Activo.objects.all().order_by('-fecha_creacion')[:10]
+    try:
+        activos_recientes = Activo.objects.all().order_by('-fecha_creacion')[:10]
+    except:
+        activos_recientes = []
     
     context = {
         'activos_disponibles': activos_disponibles,
@@ -106,6 +111,7 @@ def dashboard_asistente(request):
 
 @login_required
 def dashboard_basico(request):
+    """Dashboard para usuarios sin permisos específicos"""
     context = {
         'mensaje': 'No tienes permisos asignados. Contacta al administrador.'
     }

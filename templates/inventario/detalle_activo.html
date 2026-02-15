@@ -19,6 +19,12 @@
                 <i class="fas fa-edit"></i> Editar
             </a>
             {% endif %}
+            <a href="{% url 'movimientos:por_activo' activo.id %}" class="btn btn-info">
+                <i class="fas fa-history"></i> Ver Historial
+            </a>
+            <a href="{% url 'movimientos:crear' %}?activo={{ activo.id }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Registrar Movimiento
+            </a>
         </div>
     </div>
 
