@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from catalogos.models import Categoria, Marca, Ubicacion, Estado
 from django.utils import timezone
 
 class Activo(models.Model):
@@ -21,13 +20,13 @@ class Activo(models.Model):
     serial = models.CharField(max_length=100, blank=True, null=True)
     
     # Especificaciones
-    categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
-    marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
+    categoria = models.ForeignKey('catalogos.Categoria', on_delete=models.PROTECT)
+    marca = models.ForeignKey('catalogos.Marca', on_delete=models.PROTECT)
     modelo = models.CharField(max_length=100)
     
     # Estado y ubicación
-    estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.PROTECT)
+    estado = models.ForeignKey('catalogos.Estado', on_delete=models.PROTECT)
+    ubicacion = models.ForeignKey('catalogos.Ubicacion', on_delete=models.PROTECT)
     
     # Información de compra
     fecha_compra = models.DateField()
@@ -47,7 +46,7 @@ class Activo(models.Model):
     )
     
     # Especificaciones técnicas (opcional - JSON field para flexibilidad)
-    especificaciones = models.JSONField(default=dict, blank=True, help_text="Especificaciones en formato JSON")
+    especificaciones = models.JSONField(default=dict, blank=True)
     
     # Control
     fecha_creacion = models.DateTimeField(auto_now_add=True)

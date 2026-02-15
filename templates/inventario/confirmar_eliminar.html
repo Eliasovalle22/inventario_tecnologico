@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Activo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                    <h4>¿Está seguro de eliminar este activo?</h4>
+                    <p class="lead">
+                        <strong>{{ activo.codigo }}</strong><br>
+                        {{ activo.marca.nombre }} {{ activo.modelo }}
+                    </p>
+                    <p class="text-muted">
+                        Esta acción no se puede deshacer y eliminará todo el historial asociado.
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'inventario:detalle' activo.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, eliminar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

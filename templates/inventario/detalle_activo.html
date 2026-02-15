@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Activo - {{ activo.codigo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-info-circle"></i> 
+            Detalle del Activo: {{ activo.codigo }}
+        </h1>
+        <div>
+            <a href="{% url 'inventario:lista' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            {% if perms.inventario.change_activo %}
+            <a href="{% url 'inventario:editar' activo.id %}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Información Principal -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Información General</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Código/Placa:</th>
+                                    <td>{{ activo.codigo }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo:</th>
+                                    <td>{{ activo.get_tipo_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Serial:</th>
+                                    <td>{{ activo.serial|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Categoría:</th>
+                                    <td>{{ activo.categoria.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Marca:</th>
+                                    <td>{{ activo.marca.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Modelo:</th>
+                                    <td>{{ activo.modelo }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ activo.estado.color }};">
+                                            {{ activo.estado.nombre }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Ubicación:</th>
+                                    <td>{{ activo.ubicacion.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Responsable:</th>
+                                    <td>
+                                        {% if activo.responsable %}
+                                            {{ activo.responsable.get_full_name|default:activo.responsable.username }}
+                                        {% else %}
+                                            <span class="text-muted">Sin asignar</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha Compra:</th>
+                                    <td>{{ activo.fecha_compra|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Valor Compra:</th>
+                                    <td>
+                                        {% if activo.valor_compra %}
+                                            $ {{ activo.valor_compra|floatformat:2 }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Garantía:</th>
+                                    <td>
+                                        {{ activo.garantia_meses }} meses
+                                        {% if activo.esta_en_garantia %}
+                                            <span class="badge bg-success">Vigente</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Expirada</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if activo.proveedor %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Información de Proveedor:</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Proveedor:</th>
+                                    <td>{{ activo.proveedor }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Factura N°:</th>
+                                    <td>{{ activo.factura|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if activo.especificaciones %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Especificaciones Técnicas:</h6>
+                            <pre class="bg-light p-3 rounded">{{ activo.especificaciones|pprint }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if activo.observaciones %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Observaciones:</h6>
+                            <p class="bg-light p-3 rounded">{{ activo.observaciones }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Creado: {{ activo.fecha_creacion|date:"d/m/Y H:i" }} por {{ activo.creado_por.get_full_name|default:activo.creado_por.username }}<br>
+                        Última actualización: {{ activo.fecha_actualizacion|date:"d/m/Y H:i" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar con historial -->
+        <div class="col-md-4">
+            <!-- Últimos movimientos -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Últimos Movimientos</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for movimiento in movimientos %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ movimiento.get_tipo_display }}</h6>
+                                <small>{{ movimiento.fecha|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <p class="mb-1 small">
+                                Por: {{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}
+                            </p>
+                            {% if movimiento.observaciones %}
+                            <small class="text-muted">{{ movimiento.observaciones }}</small>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted">
+                            No hay movimientos registrados
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historial de asignaciones -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-hand-holding"></i> Asignaciones</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for asignacion in asignaciones %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ asignacion.usuario_asignado.get_full_name }}</h6>
+                                <small>{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</small>
+                            </div>
+                            <p class="mb-1 small">
+                                Asignado por: {{ asignacion.asignado_por.get_full_name }}
+                            </p>
+                            {% if asignacion.fecha_devolucion %}
+                            <small class="text-muted">
+                                Devuelto: {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
+                            </small>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted">
+                            Sin asignaciones previas
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

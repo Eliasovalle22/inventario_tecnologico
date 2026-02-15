@@ -4,4 +4,18 @@ from . import views
 app_name = 'inventario'
 
 urlpatterns = [
+    # Activos
+    path('', views.lista_activos, name='lista'),
+    
+    # Detalles, creación, edición y eliminación de activos
+    path('nuevo/', views.crear_activo, name='crear'),
+    
+    # Detalles, edición y eliminación de activos
+    path('<int:pk>/', views.detalle_activo, name='detalle'),
+    
+    # Edición y eliminación de activos
+    path('<int:pk>/editar/', views.editar_activo, name='editar'),
+    
+    # Eliminación de activos
+    path('<int:pk>/eliminar/', views.eliminar_activo, name='eliminar'),
 ]
