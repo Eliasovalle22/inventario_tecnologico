@@ -51,18 +51,3 @@ class Estado(models.Model):
     
     def __str__(self):
         return self.nombre
-    
-    def save(self, *args, **kwargs):
-        # Estados por defecto si no existen
-        if not self.pk:
-            estados_default = [
-                ('Disponible', '#28a745'),
-                ('Asignado', '#007bff'),
-                ('En reparación', '#ffc107'),
-                ('En bodega', '#17a2b8'),
-                ('Dado de baja', '#dc3545'),
-                ('Prestado', '#fd7e14'),
-            ]
-            for estado, color in estados_default:
-                Estado.objects.get_or_create(nombre=estado, defaults={'color': color})
-        super().save(*args, **kwargs)

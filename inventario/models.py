@@ -45,8 +45,8 @@ class Activo(models.Model):
         verbose_name="Responsable actual"
     )
     
-    # Especificaciones técnicas (opcional - JSON field para flexibilidad)
-    especificaciones = models.JSONField(default=dict, blank=True)
+    # Especificaciones técnicas
+    especificaciones = models.TextField(blank=True, null=True)
     
     # Control
     fecha_creacion = models.DateTimeField(auto_now_add=True)
