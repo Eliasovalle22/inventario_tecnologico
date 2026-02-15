@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Acceso Limitado{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-warning">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Acceso Limitado</h4>
+                </div>
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-lock fa-4x text-warning mb-3"></i>
+                    <h3>Bienvenido, {{ user.get_full_name|default:user.username }}</h3>
+                    <p class="lead">{{ mensaje }}</p>
+                    <p class="text-muted">Tu cuenta no tiene permisos asignados en el sistema.</p>
+                    <p class="text-muted">Por favor, contacta al administrador del sistema para asignarte un rol.</p>
+                    
+                    <div class="mt-4">
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <span>admin@inventario.com</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <i class="fas fa-calendar me-2"></i>
+                            {% now "d/m/Y" %}
+                        </div>
+                        <div class="col-6">
+                            <i class="fas fa-clock me-2"></i>
+                            {% now "H:i" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

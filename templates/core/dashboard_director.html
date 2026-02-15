@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Director TI{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard Director TI</h1>
+        <div>
+            <span class="text-muted">{{ user.get_full_name }}</span>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-muted small">Total Activos</div>
+                            <div class="h2 mb-0">{{ total_activos }}</div>
+                        </div>
+                        <div class="stat-icon text-primary">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% for item in activos_por_estado %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 4px solid {{ item.color }};">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-muted small">{{ item.estado }}</div>
+                            <div class="h2 mb-0">{{ item.count }}</div>
+                        </div>
+                        <div class="stat-icon" style="color: {{ item.color }};">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <!-- Gráfico de categorías -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Activos por Categoría</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriasChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos movimientos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Últimos Movimientos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Activo</th>
+                                    <th>Tipo</th>
+                                    <th>Usuario</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movimiento in ultimos_movimientos %}
+                                <tr>
+                                    <td>{{ movimiento.activo.codigo }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ movimiento.get_tipo_display }}</span>
+                                    </td>
+                                    <td>{{ movimiento.usuario.get_full_name }}</td>
+                                    <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay movimientos recientes</td>  <!-- 4 columnas -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activos recientes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Activos Registrados Recientemente</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Tipo</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Estado</th>
+                                    <th>Responsable</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activo in activos_recientes %}
+                                <tr>
+                                    <td>{{ activo.codigo }}</td>
+                                    <td>{{ activo.get_tipo_display }}</td>
+                                    <td>{{ activo.marca.nombre }}</td>
+                                    <td>{{ activo.modelo }}</td>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ activo.estado.color }};">
+                                            {{ activo.estado.nombre }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if activo.responsable %}
+                                            {{ activo.responsable.get_full_name }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ activo.fecha_creacion|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% empty %}
+                                {# --- CORREGIDO: 7 columnas, SIN colspan --- #}
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td class="text-center">No hay activos registrados</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Gráfico de categorías
+    const ctx = document.getElementById('categoriasChart').getContext('2d');
+    const categoriasData = {
+        labels: [{% for item in activos_por_categoria %}'{{ item.categoria__nombre }}',{% endfor %}],
+        datasets: [{
+            label: 'Cantidad de activos',
+            data: [{% for item in activos_por_categoria %}{{ item.total }},{% endfor %}],
+            backgroundColor: [
+                '#0d6efd', '#198754', '#dc3545', '#ffc107', '#0dcaf0', 
+                '#6c757d', '#6610f2', '#d63384', '#fd7e14', '#20c997'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: categoriasData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
