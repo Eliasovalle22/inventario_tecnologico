@@ -32,20 +32,20 @@
                             <td>{{ categoria.descripcion|default:"-" }}</td>
                             <td>{{ categoria.fecha_creacion|date:"d/m/Y" }}</td>
                             <td>
-                                <a href="{% url 'catalogos:editar_categoria' categoria.id %}" 
-                                   class="btn btn-sm btn-warning" title="Editar">
+                                <a href="{% url 'catalogos:editar_categoria' categoria.id %}" class="btn btn-sm btn-warning" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{% url 'catalogos:eliminar_categoria' categoria.id %}" 
-                                   class="btn btn-sm btn-danger" 
-                                   onclick="return confirm('¿Está seguro de eliminar esta categoría?')"
-                                   title="Eliminar">
+                                <a href="{% url 'catalogos:eliminar_categoria' categoria.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta categoría?')" title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
                             <td colspan="5" class="text-center">No hay categorías registradas</td>
                         </tr>
                         {% endfor %}

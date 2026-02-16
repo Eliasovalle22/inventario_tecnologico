@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Devolver Activo - Asignación #{{ asignacion.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-undo"></i> Registrar Devolución
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Activo:</strong> {{ asignacion.activo.codigo }} - 
+                        {{ asignacion.activo.marca.nombre }} {{ asignacion.activo.modelo }}<br>
+                        <strong>Asignado a:</strong> {{ asignacion.usuario_asignado.get_full_name }}<br>
+                        <strong>Fecha asignación:</strong> {{ asignacion.fecha_asignacion|date:"d/m/Y H:i" }}
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {{ form.fecha_devolucion|as_crispy_field }}
+                        {{ form.estado_activo|as_crispy_field }}
+                        {{ form.observaciones_estado|as_crispy_field }}
+                        {{ form.observaciones|as_crispy_field }}
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'asignaciones:detalle' asignacion.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Confirmar Devolución
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Asignación #{{ asignacion.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header 
+                    {% if asignacion.activo_actual %}
+                        {% if vencida %}bg-warning{% else %}bg-success{% endif %}
+                    {% else %}
+                        bg-secondary
+                    {% endif %} text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-holding"></i> 
+                        Asignación #{{ asignacion.id }}
+                        {% if asignacion.activo_actual %}
+                            <span class="badge bg-light text-dark float-end">Activa</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark float-end">Devuelta</span>
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Información del Activo</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Código:</th>
+                                    <td>
+                                        <a href="{% url 'inventario:detalle' asignacion.activo.id %}">
+                                            {{ asignacion.activo.codigo }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo:</th>
+                                    <td>{{ asignacion.activo.get_tipo_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Marca/Modelo:</th>
+                                    <td>{{ asignacion.activo.marca.nombre }} {{ asignacion.activo.modelo }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Serial:</th>
+                                    <td>{{ asignacion.activo.serial|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Información de la Asignación</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Asignado a:</th>
+                                    <td>
+                                        <i class="fas fa-user"></i>
+                                        {{ asignacion.usuario_asignado.get_full_name|default:asignacion.usuario_asignado.username }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Asignado por:</th>
+                                    <td>{{ asignacion.asignado_por.get_full_name|default:asignacion.asignado_por.username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha asignación:</th>
+                                    <td>{{ asignacion.fecha_asignacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Motivo:</th>
+                                    <td>{{ asignacion.motivo|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Fechas</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Devolución estimada:</th>
+                                    <td>
+                                        {% if asignacion.fecha_estimada_devolucion %}
+                                            {{ asignacion.fecha_estimada_devolucion|date:"d/m/Y H:i" }}
+                                            {% if asignacion.activo_actual %}
+                                                <br>
+                                                <small class="{% if vencida %}text-danger{% else %}text-success{% endif %}">
+                                                    {{ asignacion.dias_para_devolucion }} días restantes
+                                                </small>
+                                            {% endif %}
+                                        {% else %}
+                                            No especificada
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if asignacion.fecha_devolucion %}
+                                <tr>
+                                    <th>Fecha devolución:</th>
+                                    <td>{{ asignacion.fecha_devolucion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Días transcurridos:</th>
+                                    <td>{{ asignacion.dias_transcurridos }} días</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Observaciones</h6>
+                            <div class="bg-light p-3 rounded">
+                                {{ asignacion.observaciones|default:"Sin observaciones"|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if movimientos %}
+                    <hr>
+                    <h6>Movimientos relacionados</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movimiento in movimientos %}
+                                <tr>
+                                    <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ movimiento.get_tipo_display }}</span>
+                                    </td>
+                                    <td>{{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{% url 'asignaciones:lista' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                        <div>
+                            {% if asignacion.activo_actual %}
+                                <a href="{% url 'asignaciones:devolver' asignacion.id %}" class="btn btn-success">
+                                    <i class="fas fa-undo"></i> Registrar Devolución
+                                </a>
+                            {% endif %}
+                            {% if not asignacion.activo_actual and perms.asignaciones.delete_asignacion %}
+                                <a href="{% url 'asignaciones:eliminar' asignacion.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-holding"></i> {{ titulo }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {{ form.activo|as_crispy_field }}
+                        {{ form.usuario_asignado|as_crispy_field }}
+                        {{ form.motivo|as_crispy_field }}
+                        {{ form.fecha_estimada_devolucion|as_crispy_field }}
+                        {{ form.observaciones|as_crispy_field }}
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Al asignar un activo, este cambiará su estado a "Asignado" 
+                            y no estará disponible para otras asignaciones.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'asignaciones:lista' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ boton }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
