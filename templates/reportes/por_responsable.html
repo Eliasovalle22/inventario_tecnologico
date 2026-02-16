@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Activos de {{ responsable.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-user"></i> 
+            Activos de {{ responsable.get_full_name|default:responsable.username }}
+        </h1>
+        <div>
+            <a href="{% url 'reportes:responsable_excel' responsable.id %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{% url 'asignaciones:lista' %}?usuario={{ responsable.username }}" class="btn btn-info">
+                <i class="fas fa-hand-holding"></i> Ver Asignaciones
+            </a>
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6>Total Activos</h6>
+                    <h3>{{ total }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6>Valor Total</h6>
+                    <h3>$ {{ valor_total|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6>Email</h6>
+                    <h6>{{ responsable.email|default:"No registrado" }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de activos -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tipo</th>
+                            <th>Marca/Modelo</th>
+                            <th>Serial</th>
+                            <th>Estado</th>
+                            <th>Ubicación</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activo in activos %}
+                        <tr>
+                            <td><strong>{{ activo.codigo }}</strong></td>
+                            <td>{{ activo.get_tipo_display }}</td>
+                            <td>{{ activo.marca.nombre }} {{ activo.modelo }}</td>
+                            <td>{{ activo.serial|default:"-" }}</td>
+                            <td>
+                                <span class="badge" style="background-color: {{ activo.estado.color }};">
+                                    {{ activo.estado.nombre }}
+                                </span>
+                            </td>
+                            <td>{{ activo.ubicacion.nombre }}</td>
+                            <td>$ {{ activo.valor_compra|default:"0"|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No tiene activos asignados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

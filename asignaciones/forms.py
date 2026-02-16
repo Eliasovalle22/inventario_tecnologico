@@ -7,14 +7,12 @@ from django.utils import timezone
 class AsignacionForm(forms.ModelForm):
     class Meta:
         model = Asignacion
-        fields = ['activo', 'usuario_asignado', 'fecha_estimada_devolucion', 
-                  'motivo', 'observaciones']
+        fields = ['activo', 'usuario_asignado', 'fecha_estimada_devolucion', 'motivo', 'observaciones']
         widgets = {
             'fecha_estimada_devolucion': forms.DateTimeInput(
                 attrs={'type': 'datetime-local', 'class': 'form-control'}
             ),
-            'motivo': forms.TextInput(attrs={'class': 'form-control', 
-                                              'placeholder': 'Ej: Trabajo remoto, Proyecto X'}),
+            'motivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Trabajo remoto, Proyecto X'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
     
@@ -22,17 +20,18 @@ class AsignacionForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         
-        # Solo activos disponibles o en bodega
+        # Activos disponibles
         self.fields['activo'].queryset = Activo.objects.filter(
             estado__nombre__in=['Disponible', 'En bodega']
-        ).select_related('marca', 'modelo')
+        ).select_related('marca')
         self.fields['activo'].widget.attrs.update({'class': 'form-select'})
         self.fields['activo'].label = "Activo a asignar"
         
         # Usuarios activos
         self.fields['usuario_asignado'].queryset = User.objects.filter(
-            is_active=True
+        is_active=True
         ).order_by('first_name', 'last_name')
+        self.fields['usuario_asignado'].label_from_instance = lambda obj: f"{obj.get_full_name() or obj.username} ({obj.username})"
         self.fields['usuario_asignado'].widget.attrs.update({'class': 'form-select'})
         self.fields['usuario_asignado'].label = "Asignar a"
         
@@ -62,8 +61,7 @@ class DevolucionForm(forms.Form):
     )
     observaciones = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 
-                                      'placeholder': 'Observaciones de la devolución'})
+        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Observaciones de la devolución'})
     )
     estado_activo = forms.ChoiceField(
         choices=[
@@ -76,8 +74,7 @@ class DevolucionForm(forms.Form):
     )
     observaciones_estado = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control',
-                                      'placeholder': 'Detalles del estado del activo'})
+        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control', 'placeholder': 'Detalles del estado del activo'})
     )
 
 class AsignacionFiltroForm(forms.Form):
@@ -88,17 +85,8 @@ class AsignacionFiltroForm(forms.Form):
         ('vencidas', 'Vencidas'),
     ]
     
-    estado = forms.ChoiceField(choices=ESTADO_CHOICES, required=False,
-                               widget=forms.Select(attrs={'class': 'form-select'}))
-    usuario = forms.CharField(required=False,
-                              widget=forms.TextInput(attrs={'class': 'form-control',
-                                                            'placeholder': 'Usuario'}))
-    activo = forms.CharField(required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control',
-                                                           'placeholder': 'Código del activo'}))
-    fecha_desde = forms.DateField(required=False,
-                                   widget=forms.DateInput(attrs={'type': 'date',
-                                                                 'class': 'form-control'}))
-    fecha_hasta = forms.DateField(required=False,
-                                   widget=forms.DateInput(attrs={'type': 'date',
-                                                                 'class': 'form-control'}))
+    estado = forms.ChoiceField(choices=ESTADO_CHOICES, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    usuario = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Usuario'}))
+    activo = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código del activo'}))
+    fecha_desde = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+    fecha_hasta = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))

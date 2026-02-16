@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Inventario</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; }
+        h1 { color: #0d6efd; text-align: center; }
+        h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: #0d6efd; color: white; padding: 5px; text-align: left; }
+        td { padding: 3px 5px; border-bottom: 1px solid #ddd; }
+        .header-info { text-align: right; color: #666; margin-bottom: 20px; }
+        .footer { margin-top: 30px; text-align: center; color: #999; font-size: 8px; }
+        .badge { padding: 2px 5px; border-radius: 3px; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Reporte de Inventario</h1>
+    <div class="header-info">
+        Fecha: {{ fecha|date:"d/m/Y H:i" }}<br>
+        Generado por: {{ usuario.get_full_name|default:usuario.username }}
+    </div>
+
+    <h3>Resumen</h3>
+    <p><strong>Total de Activos:</strong> {{ total_activos }}</p>
+    <p><strong>Valor Total:</strong> $ {{ valor_total|floatformat:2 }}</p>
+
+    <h3>Listado de Activos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Tipo</th>
+                <th>Marca/Modelo</th>
+                <th>Estado</th>
+                <th>Ubicación</th>
+                <th>Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activo in activos %}
+            <tr>
+                <td>{{ activo.codigo }}</td>
+                <td>{{ activo.get_tipo_display }}</td>
+                <td>{{ activo.marca.nombre }} {{ activo.modelo }}</td>
+                <td>{{ activo.estado.nombre }}</td>
+                <td>{{ activo.ubicacion.nombre }}</td>
+                <td>{{ activo.responsable.get_full_name|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Generado por Sistema de Inventario TI - {{ fecha|date:"d/m/Y H:i" }}
+    </div>
+</body>
+</html>

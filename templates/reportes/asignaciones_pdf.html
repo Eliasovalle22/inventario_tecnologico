@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Asignaciones</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; }
+        h1 { color: #0d6efd; text-align: center; }
+        h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: #0d6efd; color: white; padding: 5px; text-align: left; }
+        td { padding: 3px 5px; border-bottom: 1px solid #ddd; }
+        .header-info { text-align: right; color: #666; margin-bottom: 20px; }
+        .footer { margin-top: 30px; text-align: center; color: #999; font-size: 8px; }
+        .badge-activa { background-color: #28a745; color: white; padding: 2px 5px; border-radius: 3px; }
+        .badge-devuelta { background-color: #6c757d; color: white; padding: 2px 5px; border-radius: 3px; }
+        .vencida { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Reporte de Asignaciones</h1>
+    <div class="header-info">
+        Fecha: {{ fecha|date:"d/m/Y H:i" }}<br>
+        Generado por: {{ usuario.get_full_name|default:usuario.username }}
+    </div>
+
+    <h3>Resumen</h3>
+    <p><strong>Total de Asignaciones:</strong> {{ total_asignaciones }}</p>
+    <p><strong>Asignaciones Activas:</strong> {{ activas }}</p>
+    <p><strong>Asignaciones Devueltas:</strong> {{ devueltas }}</p>
+
+    <h3>Listado de Asignaciones</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Activo</th>
+                <th>Asignado a</th>
+                <th>Asignado por</th>
+                <th>Fecha Asignación</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asig in asignaciones %}
+            <tr>
+                <td>#{{ asig.id }}</td>
+                <td>{{ asig.activo.codigo }} - {{ asig.activo.marca.nombre }} {{ asig.activo.modelo }}</td>
+                <td>{{ asig.usuario_asignado.get_full_name|default:asig.usuario_asignado.username }}</td>
+                <td>{{ asig.asignado_por.get_full_name|default:asig.asignado_por.username }}</td>
+                <td>{{ asig.fecha_asignacion|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {% if asig.activo_actual %}
+                        <span class="badge-activa">Activa</span>
+                    {% else %}
+                        <span class="badge-devuelta">Devuelta</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Generado por Sistema de Inventario TI - {{ fecha|date:"d/m/Y H:i" }}
+    </div>
+</body>
+</html>

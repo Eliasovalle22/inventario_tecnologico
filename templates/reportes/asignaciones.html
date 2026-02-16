@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte de Asignaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-hand-holding"></i> Reporte de Asignaciones</h1>
+        <div>
+            <a href="{% url 'reportes:asignaciones_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{% url 'reportes:asignaciones_pdf' %}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h6 class="m-0 font-weight-bold">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="activas" {% if estado_filtro == 'activas' %}selected{% endif %}>Activas</option>
+                        <option value="devueltas" {% if estado_filtro == 'devueltas' %}selected{% endif %}>Devueltas</option>
+                        <option value="todas" {% if estado_filtro == 'todas' %}selected{% endif %}>Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de asignaciones -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Activo</th>
+                            <th>Asignado a</th>
+                            <th>Asignado por</th>
+                            <th>Fecha Asignación</th>
+                            <th>Fecha Devolución</th>
+                            <th>Estado</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asig in asignaciones %}
+                        <tr>
+                            <td>#{{ asig.id }}</td>
+                            <td>
+                                <strong>{{ asig.activo.codigo }}</strong><br>
+                                <small>{{ asig.activo.marca.nombre }} {{ asig.activo.modelo }}</small>
+                            </td>
+                            <td>{{ asig.usuario_asignado.get_full_name|default:asig.usuario_asignado.username }}</td>
+                            <td>{{ asig.asignado_por.get_full_name|default:asig.asignado_por.username }}</td>
+                            <td>{{ asig.fecha_asignacion|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if asig.fecha_devolucion %}
+                                    {{ asig.fecha_devolucion|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if asig.activo_actual %}
+                                    <span class="badge bg-success">Activa</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Devuelta</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ asig.motivo|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No hay asignaciones para mostrar</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-info">
+                            <th colspan="7" class="text-end">Total Asignaciones:</th>
+                            <th>{{ asignaciones|length }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte de Movimientos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-history"></i> Reporte de Movimientos</h1>
+        <a href="{% url 'reportes:movimientos_excel' %}" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Excel
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h6 class="m-0 font-weight-bold">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos</option>
+                        {% for key, value in tipos %}
+                        <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Desde</label>
+                    <input type="date" name="fecha_desde" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Hasta</label>
+                    <input type="date" name="fecha_hasta" class="form-control">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de movimientos -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Activo</th>
+                            <th>Tipo</th>
+                            <th>Usuario</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mov in movimientos %}
+                        <tr>
+                            <td>{{ mov.fecha|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <strong>{{ mov.activo.codigo }}</strong><br>
+                                <small>{{ mov.activo.marca.nombre }} {{ mov.activo.modelo }}</small>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if mov.tipo == 'ENTRADA' %}bg-success
+                                    {% elif mov.tipo == 'SALIDA' %}bg-warning
+                                    {% elif mov.tipo == 'ASIGNACION' %}bg-primary
+                                    {% elif mov.tipo == 'DEVOLUCION' %}bg-info
+                                    {% elif mov.tipo == 'TRASLADO' %}bg-secondary
+                                    {% elif mov.tipo == 'BAJA' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ mov.get_tipo_display }}
+                                </span>
+                            </td>
+                            <td>{{ mov.usuario.get_full_name|default:mov.usuario.username }}</td>
+                            <td>{{ mov.ubicacion_origen.nombre|default:"-" }}</td>
+                            <td>{{ mov.ubicacion_destino.nombre|default:"-" }}</td>
+                            <td>{{ mov.observaciones|truncatechars:50|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No hay movimientos para mostrar</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

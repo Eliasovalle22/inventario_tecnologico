@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte de Inventario{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-boxes"></i> Reporte de Inventario</h1>
+        <div>
+            <a href="{% url 'reportes:inventario_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{% url 'reportes:inventario_pdf' %}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h6 class="m-0 font-weight-bold">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="">Todos</option>
+                        {% for estado in estados %}
+                        <option value="{{ estado.id }}" {% if filtro_estado == estado.id|stringformat:"s" %}selected{% endif %}>
+                            {{ estado.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Categoría</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Todos</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if filtro_categoria == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ubicación</label>
+                    <select name="ubicacion" class="form-select">
+                        <option value="">Todos</option>
+                        {% for u in ubicaciones %}
+                        <option value="{{ u.id }}" {% if filtro_ubicacion == u.id|stringformat:"s" %}selected{% endif %}>
+                            {{ u.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tipo</th>
+                            <th>Marca/Modelo</th>
+                            <th>Serial</th>
+                            <th>Estado</th>
+                            <th>Ubicación</th>
+                            <th>Responsable</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activo in activos %}
+                        <tr>
+                            <td><strong>{{ activo.codigo }}</strong></td>
+                            <td>{{ activo.get_tipo_display }}</td>
+                            <td>{{ activo.marca.nombre }} {{ activo.modelo }}</td>
+                            <td>{{ activo.serial|default:"-" }}</td>
+                            <td>
+                                <span class="badge" style="background-color: {{ activo.estado.color }};">
+                                    {{ activo.estado.nombre }}
+                                </span>
+                            </td>
+                            <td>{{ activo.ubicacion.nombre }}</td>
+                            <td>{{ activo.responsable.get_full_name|default:"-" }}</td>
+                            <td>$ {{ activo.valor_compra|default:"0"|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No hay activos para mostrar</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-info">
+                            <th colspan="7" class="text-end">Total Activos:</th>
+                            <th>{{ activos|length }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
