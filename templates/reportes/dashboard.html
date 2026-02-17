@@ -9,74 +9,78 @@
 
     <!-- Tarjetas de resumen -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 3px solid var(--app-primary);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Total Activos</h6>
-                            <h2 class="mt-2 mb-0">{{ total_activos }}</h2>
+                            <div class="text-muted small">Total Activos</div>
+                            <div class="h2 mt-1 mb-0">{{ total_activos }}</div>
                         </div>
-                        <i class="fas fa-microchip fa-3x opacity-50"></i>
+                        <div class="stat-icon" style="color: var(--app-primary);">
+                            <i class="fas fa-microchip"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'reportes:inventario' %}">Ver detalles</a>
-                    <i class="fas fa-angle-right"></i>
+                <div class="card-footer">
+                    <a class="small" href="{% url 'reportes:inventario' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-success text-white mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 3px solid var(--app-success);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Asignaciones Activas</h6>
-                            <h2 class="mt-2 mb-0">{{ asignaciones_activas }}</h2>
+                            <div class="text-muted small">Asignaciones Activas</div>
+                            <div class="h2 mt-1 mb-0">{{ asignaciones_activas }}</div>
                         </div>
-                        <i class="fas fa-hand-holding fa-3x opacity-50"></i>
+                        <div class="stat-icon" style="color: var(--app-success);">
+                            <i class="fas fa-hand-holding"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'reportes:asignaciones' %}">Ver detalles</a>
-                    <i class="fas fa-angle-right"></i>
+                <div class="card-footer">
+                    <a class="small" href="{% url 'reportes:asignaciones' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-warning text-white mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 3px solid var(--app-warning);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Asignaciones Vencidas</h6>
-                            <h2 class="mt-2 mb-0">{{ asignaciones_vencidas }}</h2>
+                            <div class="text-muted small">Asignaciones Vencidas</div>
+                            <div class="h2 mt-1 mb-0">{{ asignaciones_vencidas }}</div>
                         </div>
-                        <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                        <div class="stat-icon" style="color: var(--app-warning);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'asignaciones:lista' %}?estado=vencidas">Ver detalles</a>
-                    <i class="fas fa-angle-right"></i>
+                <div class="card-footer">
+                    <a class="small" href="{% url 'asignaciones:lista' %}?estado=vencidas">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-info text-white mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 3px solid var(--app-info);">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Movimientos (30 días)</h6>
-                            <h2 class="mt-2 mb-0">{{ movimientos_30d }}</h2>
+                            <div class="text-muted small">Movimientos (30 días)</div>
+                            <div class="h2 mt-1 mb-0">{{ movimientos_30d }}</div>
                         </div>
-                        <i class="fas fa-history fa-3x opacity-50"></i>
+                        <div class="stat-icon" style="color: var(--app-info);">
+                            <i class="fas fa-history"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'movimientos:lista' %}">Ver detalles</a>
-                    <i class="fas fa-angle-right"></i>
+                <div class="card-footer">
+                    <a class="small" href="{% url 'movimientos:lista' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -178,7 +182,10 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'bottom' }
+                        legend: { 
+                            position: 'bottom',
+                            labels: { color: '#7b809a' }
+                        }
                     }
                 }
             });
@@ -194,14 +201,23 @@
                     datasets: [{
                         label: 'Cantidad de activos',
                         data: data.values,
-                        backgroundColor: '#0d6efd',
-                        borderWidth: 1
+                        backgroundColor: '#1A73E8',
+                        borderRadius: 6,
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1, color: '#7b809a' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#7b809a' },
+                            grid: { display: false }
+                        }
                     }
                 }
             });
@@ -217,16 +233,25 @@
                     datasets: [{
                         label: 'Movimientos',
                         data: data.values,
-                        borderColor: '#198754',
-                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                        tension: 0.1,
-                        fill: true
+                        borderColor: '#66BB6A',
+                        backgroundColor: 'rgba(102, 187, 106, 0.08)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#66BB6A'
                     }]
                 },
                 options: {
                     responsive: true,
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1, color: '#7b809a' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#7b809a' },
+                            grid: { display: false }
+                        }
                     }
                 }
             });

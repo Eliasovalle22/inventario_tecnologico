@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard de Asignaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-pie"></i> Dashboard de Asignaciones</h1>
+        <div>
+            <a href="{% url 'asignaciones:lista' %}" class="btn btn-outline-primary">
+                <i class="fas fa-list"></i> Ver Asignaciones
+            </a>
+            <a href="{% url 'asignaciones:crear' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nueva Asignación
+            </a>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Total Asignaciones</h6>
+                            <h2 class="mb-0">{{ total_asignaciones|default:"0" }}</h2>
+                        </div>
+                        <i class="fas fa-hand-holding fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-primary border-0">
+                    <small>Histórico completo</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Asignaciones Activas</h6>
+                            <h2 class="mb-0">{{ activas|default:"0" }}</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-success border-0">
+                    <small>Actualmente en uso</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Devueltas</h6>
+                            <h2 class="mb-0">{{ devueltas|default:"0" }}</h2>
+                        </div>
+                        <i class="fas fa-undo-alt fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-warning border-0">
+                    <small>Completadas</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-2">Vencidas</h6>
+                            <h2 class="mb-0">{{ vencidas|default:"0" }}</h2>
+                        </div>
+                        <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-danger border-0">
+                    <small>Requieren atención</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Top Usuarios -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0"><i class="fas fa-users"></i> Usuarios con más asignaciones</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th class="text-center">Asignaciones</th>
+                                    <th class="text-center">Activas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in top_usuarios %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-user-circle"></i>
+                                        {{ usuario.get_full_name|default:usuario.username }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary">{{ usuario.total }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">{{ usuario.activas|default:"0" }}</span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No hay datos</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'asignaciones:lista' %}?usuario=" class="btn btn-sm btn-outline-primary">
+                        Ver todos <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Activos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0"><i class="fas fa-microchip"></i> Activos más asignados</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Activo</th>
+                                    <th class="text-center">Total</th>
+                                    <th class="text-center">Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activo in top_activos %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ activo.codigo }}</strong>
+                                        <br>
+                                        <small>{{ activo.marca.nombre }} {{ activo.modelo }}</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary">{{ activo.total }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if activo.estado.nombre == 'Asignado' %}
+                                            <span class="badge bg-success">Sí</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No hay datos</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'inventario:lista' %}" class="btn btn-sm btn-outline-success">
+                        Ver inventario <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de tendencia -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="m-0"><i class="fas fa-chart-line"></i> Tendencia de asignaciones (últimos 30 días)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="tendenciaChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos de ejemplo para el gráfico (esto deberías generarlos desde el backend)
+    const ctx = document.getElementById('tendenciaChart').getContext('2d');
+    
+    // Generar fechas de los últimos 30 días
+    const fechas = [];
+    const hoy = new Date();
+    for (let i = 29; i >= 0; i--) {
+        const fecha = new Date(hoy);
+        fecha.setDate(hoy.getDate() - i);
+        fechas.push(fecha.toLocaleDateString('es', { day: '2-digit', month: '2-digit' }));
+    }
+
+    // Datos simulados (idealmente vendrían del backend)
+    const datosAsignaciones = Array(30).fill(0).map(() => Math.floor(Math.random() * 5));
+    const datosDevoluciones = Array(30).fill(0).map(() => Math.floor(Math.random() * 3));
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fechas,
+            datasets: [
+                {
+                    label: 'Asignaciones',
+                    data: datosAsignaciones,
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.1,
+                    fill: true
+                },
+                {
+                    label: 'Devoluciones',
+                    data: datosDevoluciones,
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.1,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

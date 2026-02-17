@@ -4,13 +4,15 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.utils import timezone
-
+from django.db.models import Count
+from datetime import timedelta
 from catalogos.models import Estado
 from .models import Asignacion
 from .forms import AsignacionForm, DevolucionForm, AsignacionFiltroForm
 from inventario.models import Activo
 from movimientos.models import Movimiento
 from django.contrib.auth.models import User
+from django.db import models
 
 @login_required
 @permission_required('asignaciones.view_asignacion', raise_exception=True)
@@ -236,9 +238,6 @@ def mis_asignaciones(request):
 @login_required
 @permission_required('asignaciones.view_asignacion', raise_exception=True)
 def dashboard_asignaciones(request):
-    from django.db.models import Count
-    from datetime import timedelta
-    
     # Estadísticas generales
     total_asignaciones = Asignacion.objects.count()
     activas = Asignacion.objects.filter(activo_actual=True).count()
@@ -260,18 +259,21 @@ def dashboard_asignaciones(request):
     ).count()
     
     # Top usuarios con más asignaciones
+    from django.contrib.auth.models import User
     top_usuarios = User.objects.filter(
-        asignaciones_recibidas__activo_actual=True
+        asignaciones_recibidas__isnull=False
     ).annotate(
-        total=Count('asignaciones_recibidas')
+        total=Count('asignaciones_recibidas'),
+        activas=Count('asignaciones_recibidas', filter=models.Q(asignaciones_recibidas__activo_actual=True))
     ).order_by('-total')[:10]
     
-    # Activos más asignados
+    # Top activos más asignados
+    from inventario.models import Activo
     top_activos = Activo.objects.filter(
         asignaciones__isnull=False
     ).annotate(
         total=Count('asignaciones')
-    ).order_by('-total')[:10]
+    ).select_related('marca', 'estado').order_by('-total')[:10]
     
     context = {
         'total_asignaciones': total_asignaciones,

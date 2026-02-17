@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema de Inventario Tecnológico{% endblock %}</title>
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -19,10 +21,13 @@
 <body class="{% block body_class %}{% endblock %}">
     {% if user.is_authenticated %}
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg app-navbar">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'core:dashboard' %}">
-                    <i class="fas fa-microchip"></i> Inventario TI
+                    <div class="brand-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <span>Inventario TI</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -92,17 +97,20 @@
                     
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> {{ user.get_full_name|default:user.username }}
+                            <a class="nav-link dropdown-toggle user-dropdown" href="#" role="button" data-bs-toggle="dropdown">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <span>{{ user.get_full_name|default:user.username }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{% url 'accounts:perfil' %}">
-                                    <i class="fas fa-id-card"></i> Mi Perfil
+                                    <i class="fas fa-id-card me-2"></i> Mi Perfil
                                 </a></li>
                                 {% if user.is_superuser or user.groups.all %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><span class="dropdown-item-text">
-                                    <small>Rol: 
+                                    <small class="text-muted"><i class="fas fa-shield-alt me-1"></i>Rol: 
                                         {% if user.is_superuser %}Administrador
                                         {% else %}{{ user.groups.first.name }}
                                         {% endif %}
@@ -111,7 +119,7 @@
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </a></li>
                             </ul>
                         </li>
@@ -122,16 +130,19 @@
     {% endif %}
 
     <!-- Mensajes -->
+    {% block messages %}
     {% if messages %}
-    <div class="container mt-3">
+    <div class="container-fluid px-4 mt-3">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show app-alert" role="alert">
+            <i class="fas {% if message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endfor %}
     </div>
     {% endif %}
+    {% endblock %}
 
     <!-- Contenido principal -->
     <main class="container-fluid py-4">
@@ -139,9 +150,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-muted py-3 mt-5">
+    <footer class="app-footer">
         <div class="container">
-            <small>&copy; {% now "Y" %} Sistema de Inventario Tecnológico. v1.0</small>
+            <small><i class="fas fa-shield-alt me-1"></i> &copy; {% now "Y" %} Sistema de Inventario Tecnológico &middot; v1.0</small>
         </div>
     </footer>
 
