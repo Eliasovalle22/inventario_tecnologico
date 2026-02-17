@@ -35,15 +35,12 @@
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     {% if perms.catalogos.change_marca %}
-                                    <a href="{% url 'catalogos:editar_marca' marca.id %}" 
-                                       class="btn btn-warning" title="Editar">
+                                    <a href="{% url 'catalogos:editar_marca' marca.id %}" class="btn btn-warning" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     {% endif %}
                                     {% if perms.catalogos.delete_marca %}
-                                    <a href="{% url 'catalogos:eliminar_marca' marca.id %}" 
-                                       class="btn btn-danger" title="Eliminar"
-                                       onclick="return confirm('¿Está seguro de eliminar esta marca?')">
+                                    <a href="{% url 'catalogos:eliminar_marca' marca.id %}" class="btn btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta marca?')">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     {% endif %}

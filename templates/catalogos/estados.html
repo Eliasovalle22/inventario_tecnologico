@@ -41,15 +41,12 @@
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     {% if perms.catalogos.change_estado %}
-                                    <a href="{% url 'catalogos:editar_estado' estado.id %}" 
-                                       class="btn btn-warning" title="Editar">
+                                    <a href="{% url 'catalogos:editar_estado' estado.id %}" class="btn btn-warning" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     {% endif %}
                                     {% if perms.catalogos.delete_estado %}
-                                    <a href="{% url 'catalogos:eliminar_estado' estado.id %}" 
-                                       class="btn btn-danger" title="Eliminar"
-                                       onclick="return confirm('¿Está seguro de eliminar este estado?')">
+                                    <a href="{% url 'catalogos:eliminar_estado' estado.id %}" class="btn btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este estado?')">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     {% endif %}

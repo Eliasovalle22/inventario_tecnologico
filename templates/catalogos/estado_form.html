@@ -20,17 +20,14 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Nombre *</label>
-                            <input type="text" name="nombre" class="form-control" 
-                                   value="{{ estado.nombre|default:'' }}" required>
+                            <input type="text" name="nombre" class="form-control" value="{{ estado.nombre|default:'' }}" required>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Color *</label>
                             <div class="input-group">
-                                <input type="color" name="color" class="form-control form-control-color" 
-                                       value="{{ estado.color|default:'#6c757d' }}" title="Selecciona un color">
-                                <input type="text" name="color_text" class="form-control" 
-                                       value="{{ estado.color|default:'#6c757d' }}" placeholder="#RRGGBB">
+                                <input type="color" name="color" class="form-control form-control-color" value="{{ estado.color|default:'#6c757d' }}" title="Selecciona un color">
+                                <input type="text" name="color_text" class="form-control" value="{{ estado.color|default:'#6c757d' }}" placeholder="#RRGGBB">
                             </div>
                             <small class="text-muted">Selecciona un color para identificar el estado</small>
                         </div>
