@@ -30,7 +30,7 @@
                 </div>
             </div>
             <h1>Inventario TI</h1>
-            <p>Sistema de Gestión de Activos Tecnológicos</p>
+            <p>Sistema de Gestión de Inventario Tecnológico</p>
         </div>
 
         <!-- Body -->
@@ -95,7 +95,7 @@
                 </p>
                 <div class="system-badge">
                     <i class="fas fa-shield-alt"></i>
-                    <span>Entorno Seguro • {% now "d/m/Y H:i" %}</span>
+                    <span>{% now "d/m/Y H:i" %}</span>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@
 
 {% block extra_js %}
 <script>
-    // Toggle password visibility
+    // visibilidad de contraseña
     function togglePassword() {
         const passwordInput = document.getElementById('id_password');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -142,7 +142,7 @@
         }
     });
 
-    // Loading state en submit
+    // Indicador de carga
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.classList.add('loading');
