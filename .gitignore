@@ -58,7 +58,7 @@ media/
 staticfiles/
 
 # Archivos generados por collectstatic
-static/
+
 
 # Migraciones compiladas
 **/migrations/*.pyc
