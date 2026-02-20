@@ -26,9 +26,7 @@
             <form method="get" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Buscar</label>
-                    <input type="text" name="q" class="form-control" 
-                           placeholder="Código, serial, modelo, responsable..." 
-                           value="{{ query|default:'' }}">
+                    <input type="text" name="q" class="form-control" placeholder="Código, serial, modelo, responsable..." value="{{ query|default:'' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Estado</label>
@@ -102,19 +100,16 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{% url 'inventario:detalle' activo.id %}" 
-                                       class="btn btn-info" title="Ver detalle">
+                                    <a href="{% url 'inventario:detalle' activo.id %}" class="btn btn-info" title="Ver detalle">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     {% if perms.inventario.change_activo %}
-                                    <a href="{% url 'inventario:editar' activo.id %}" 
-                                       class="btn btn-warning" title="Editar">
+                                    <a href="{% url 'inventario:editar' activo.id %}" class="btn btn-warning" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     {% endif %}
                                     {% if perms.inventario.delete_activo %}
-                                    <a href="{% url 'inventario:eliminar' activo.id %}" 
-                                       class="btn btn-danger" title="Eliminar">
+                                    <a href="{% url 'inventario:eliminar' activo.id %}" class="btn btn-danger" title="Eliminar">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     {% endif %}

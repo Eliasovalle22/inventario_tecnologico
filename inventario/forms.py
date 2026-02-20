@@ -11,7 +11,7 @@ class ActivoForm(forms.ModelForm):
         widgets = {
             'fecha_compra': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'especificaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Ingrese especificaciones en formato JSON'}),
+            'especificaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Ingrese especificaciones: procesador, RAM, disco, etc.'}),
         }
     
     def __init__(self, *args, **kwargs):
