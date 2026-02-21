@@ -15,7 +15,7 @@ class Activo(models.Model):
     ]
     
     # Identificación
-    codigo = models.CharField(max_length=50, unique=True, verbose_name="Código/Placa")
+    codigo = models.CharField(max_length=50, unique=True, verbose_name="Código/Inventario")
     tipo = models.CharField(max_length=20, choices=TIPO_ACTIVO, default='OTRO')
     serial = models.CharField(max_length=100, blank=True, null=True)
     
@@ -31,7 +31,7 @@ class Activo(models.Model):
     # Información de compra
     fecha_compra = models.DateField()
     valor_compra = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    garantia_meses = models.IntegerField(default=12, help_text="Meses de garantía")
+    garantia_meses = models.IntegerField(default=12)
     proveedor = models.CharField(max_length=200, blank=True, null=True)
     factura = models.CharField(max_length=100, blank=True, null=True, verbose_name="N° Factura")
     
