@@ -173,6 +173,16 @@
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                 }
             });
+
+            // Auto-cerrar alertas
+            $('.app-alert').each(function() {
+                var alert = $(this);
+                setTimeout(function() {
+                    alert.fadeTo(500, 0).slideUp(500, function() {
+                        $(this).remove();
+                    });
+                }, 4000);
+            });
         });
     </script>
 </body>
