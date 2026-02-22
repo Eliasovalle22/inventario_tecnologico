@@ -4,9 +4,7 @@ from inventario.models import Activo
 from django.utils import timezone
 
 class Asignacion(models.Model):
-    """
-    Registro de asignaciones de activos a usuarios/empleados
-    """
+
     activo = models.ForeignKey(Activo, on_delete=models.PROTECT, related_name='asignaciones')
     usuario_asignado = models.ForeignKey(
         User, 
@@ -23,13 +21,18 @@ class Asignacion(models.Model):
     
     fecha_asignacion = models.DateTimeField(default=timezone.now)
     fecha_devolucion = models.DateTimeField(null=True, blank=True)
-    fecha_estimada_devolucion = models.DateTimeField(null=True, blank=True, 
-                                                      help_text="Fecha estimada de devolución")
+    fecha_estimada_devolucion = models.DateTimeField(null=True, blank=True)
     
     # Información adicional
     observaciones = models.TextField(blank=True, null=True)
-    motivo = models.CharField(max_length=200, blank=True, null=True, 
-                              help_text="Motivo de la asignación")
+    motivo = models.CharField(max_length=200, blank=True, null=True)
+    evidencias = models.URLField(
+        max_length=500, 
+        blank=True, 
+        null=True,
+        verbose_name="Evidencias",
+        help_text="URL de evidencia fotográfica o documental"
+    )
     
     # Control
     activo_actual = models.BooleanField(default=True, 

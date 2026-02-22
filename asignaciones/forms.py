@@ -7,13 +7,14 @@ from django.utils import timezone
 class AsignacionForm(forms.ModelForm):
     class Meta:
         model = Asignacion
-        fields = ['activo', 'usuario_asignado', 'fecha_estimada_devolucion', 'motivo', 'observaciones']
+        fields = ['activo', 'usuario_asignado', 'fecha_estimada_devolucion', 'motivo', 'observaciones', 'evidencias']
         widgets = {
             'fecha_estimada_devolucion': forms.DateTimeInput(
                 attrs={'type': 'datetime-local', 'class': 'form-control'}
             ),
-            'motivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Trabajo remoto, Proyecto X'}),
+            'motivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Trabajo remoto, etc.'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'evidencias': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://drive.google.com/...'}),
         }
     
     def __init__(self, *args, **kwargs):
@@ -24,7 +25,7 @@ class AsignacionForm(forms.ModelForm):
         self.fields['activo'].queryset = Activo.objects.filter(
             estado__nombre__in=['Disponible', 'En bodega']
         ).select_related('marca')
-        self.fields['activo'].widget.attrs.update({'class': 'form-select'})
+        self.fields['activo'].widget.attrs.update({'class': 'form-select select2-field'})
         self.fields['activo'].label = "Activo a asignar"
         
         # Usuarios activos
@@ -32,8 +33,11 @@ class AsignacionForm(forms.ModelForm):
         is_active=True
         ).order_by('first_name', 'last_name')
         self.fields['usuario_asignado'].label_from_instance = lambda obj: f"{obj.get_full_name() or obj.username} ({obj.username})"
-        self.fields['usuario_asignado'].widget.attrs.update({'class': 'form-select'})
+        self.fields['usuario_asignado'].widget.attrs.update({'class': 'form-select select2-field'})
         self.fields['usuario_asignado'].label = "Asignar a"
+        
+        self.fields['evidencias'].required = False
+        self.fields['evidencias'].label = "Evidencias (URL)"
         
         self.fields['fecha_estimada_devolucion'].required = False
         self.fields['fecha_estimada_devolucion'].label = "Fecha estimada de devolución"

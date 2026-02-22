@@ -72,6 +72,18 @@
                                     <th>Motivo:</th>
                                     <td>{{ asignacion.motivo|default:"-" }}</td>
                                 </tr>
+                                <tr>
+                                    <th>Evidencias:</th>
+                                    <td>
+                                        {% if asignacion.evidencias %}
+                                            <a href="{{ asignacion.evidencias }}" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-external-link-alt"></i> Ver evidencia
+                                            </a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>
