@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.SessionTimeoutMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -154,3 +155,10 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
+
+# Timeout de sesión por inactividad
+SESSION_INACTIVITY_TIMEOUT = 1800  # 30 minutos
+# Tiempo de vida de la cookie de sesión (2 horas)
+SESSION_COOKIE_AGE = 7200
+# Guardar la sesión en cada solicitud para actualizar el tiempo de inactividad
+SESSION_SAVE_EVERY_REQUEST = True
