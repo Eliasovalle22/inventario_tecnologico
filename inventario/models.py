@@ -11,6 +11,7 @@ class Activo(models.Model):
         ('SWITCH', 'Switch'),
         ('ROUTER', 'Router'),
         ('SERVER', 'Servidor'),
+        ('CELULAR', 'Celular'),
         ('OTRO', 'Otro'),
     ]
     
@@ -29,7 +30,7 @@ class Activo(models.Model):
     ubicacion = models.ForeignKey('catalogos.Ubicacion', on_delete=models.PROTECT)
     
     # Información de compra
-    fecha_compra = models.DateField()
+    fecha_compra = models.DateField(blank=True, null=True)
     valor_compra = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     garantia_meses = models.IntegerField(default=12)
     proveedor = models.CharField(max_length=200, blank=True, null=True)

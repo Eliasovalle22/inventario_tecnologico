@@ -103,8 +103,6 @@ def crear_activo(request):
             return redirect('inventario:detalle', pk=activo.pk)
     else:
         form = ActivoForm()
-        # Valores por defecto
-        form.fields['estado'].initial = Estado.objects.filter(nombre='Disponible').first()
     
     context = {
         'form': form,

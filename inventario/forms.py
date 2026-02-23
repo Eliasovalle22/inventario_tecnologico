@@ -35,9 +35,26 @@ class ActivoForm(forms.ModelForm):
         
         self.fields['estado'].queryset = Estado.objects.all().order_by('nombre')
         self.fields['estado'].widget.attrs.update({'class': 'form-select'})
+        self.fields['estado'].required = True
+        self.fields['estado'].empty_label = None
         
         self.fields['ubicacion'].queryset = Ubicacion.objects.all().order_by('nombre')
         self.fields['ubicacion'].widget.attrs.update({'class': 'form-select'})
+        self.fields['ubicacion'].required = True
+        self.fields['ubicacion'].empty_label = None
+        
+        # Establecer "En bodega" como valor por defecto si es un nuevo activo
+        if not self.instance.pk:
+            try:
+                estado_bodega = Estado.objects.get(nombre='En bodega')
+                self.fields['estado'].initial = estado_bodega.pk
+            except Estado.DoesNotExist:
+                pass
+            try:
+                ubicacion_bodega = Ubicacion.objects.get(nombre='En bodega')
+                self.fields['ubicacion'].initial = ubicacion_bodega.pk
+            except Ubicacion.DoesNotExist:
+                pass
         
         self.fields['responsable'].queryset = User.objects.filter(is_active=True).order_by('username')
         self.fields['responsable'].widget.attrs.update({'class': 'form-select'})
