@@ -7,6 +7,18 @@ class PerfilInline(admin.StackedInline):
     model = Perfil
     can_delete = False
     verbose_name_plural = 'Perfil'
+    extra = 0
+    min_num = 0
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs
+
+    def has_add_permission(self, request, obj=None):
+        # No permitir agregar inline si el perfil ya existe (lo crea el signal)
+        if obj and Perfil.objects.filter(usuario=obj).exists():
+            return False
+        return False  # Nunca agregar desde inline, el signal se encarga
 
 class CustomUserAdmin(UserAdmin):
     inlines = (PerfilInline,)

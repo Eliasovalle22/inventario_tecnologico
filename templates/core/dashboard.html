@@ -1,19 +1,57 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dashboard Director TI{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-tachometer-alt"></i> Dashboard Director TI</h1>
-        <div>
-            <span class="text-muted">{{ user.get_full_name }}</span>
+
+    {% if not tiene_permisos %}
+    <!-- Sin permisos -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card" style="border-left: 3px solid var(--app-warning);">
+                <div class="card-header" style="background: rgba(255, 167, 38, 0.08) !important;">
+                    <h4 class="mb-0" style="color: #e65100;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Acceso Limitado
+                    </h4>
+                </div>
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-lock fa-4x mb-3" style="color: var(--app-warning); opacity: 0.5;"></i>
+                    <h3>Bienvenido, {{ user.get_full_name|default:user.username }}</h3>
+                    <p class="lead">{{ mensaje }}</p>
+                    <p class="text-muted">Tu cuenta no tiene permisos asignados en el sistema.</p>
+                    <p class="text-muted">Por favor, contacta al administrador del sistema para asignarte permisos.</p>
+                    <div class="mt-4">
+                        <i class="fas fa-envelope me-2" style="color: var(--app-primary-light);"></i>
+                        <span>admin@inventario.com</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row text-center text-muted">
+                        <div class="col-6">
+                            <i class="fas fa-calendar me-2"></i>{% now "d/m/Y" %}
+                        </div>
+                        <div class="col-6">
+                            <i class="fas fa-clock me-2"></i>{% now "H:i" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- KPIs -->
+    {% else %}
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <div>
+            <span class="text-muted">{{ user.get_full_name|default:user.username }}</span>
+        </div>
+    </div>
+
+    <!-- ============ KPIs ============ -->
+    {% if perms.inventario.view_activo %}
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card stat-card border-start border-primary border-4">
@@ -48,10 +86,45 @@
             </div>
         </div>
         {% endfor %}
+
+        {% if perms.asignaciones.view_asignacion %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 4px solid #7c3aed;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-muted small">Asignaciones Activas</div>
+                            <div class="h2 mb-0">{{ total_asignaciones_activas|default:"0" }}</div>
+                        </div>
+                        <div class="stat-icon" style="color: #7c3aed;">
+                            <i class="fas fa-hand-holding"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card" style="border-left: 4px solid #14b8a6;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-muted small">Mis Asignaciones</div>
+                            <div class="h2 mb-0">{{ mis_asignaciones|default:"0" }}</div>
+                        </div>
+                        <div class="stat-icon" style="color: #14b8a6;">
+                            <i class="fas fa-user-tag"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
+    {% endif %}
 
     <div class="row">
-        <!-- Gráfico de categorías -->
+        <!-- ============ Gráfico de categorías ============ -->
+        {% if perms.inventario.view_activo %}
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
@@ -62,8 +135,10 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
-        <!-- Últimos movimientos -->
+        <!-- ============ Últimos movimientos ============ -->
+        {% if perms.movimientos.view_movimiento %}
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
@@ -112,9 +187,11 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
-<!-- Activos recientes -->
+    <!-- ============ Activos recientes ============ -->
+    {% if perms.inventario.view_activo %}
     <div class="row">
         <div class="col-12">
             <div class="card shadow">
@@ -163,14 +240,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td class="text-center">No hay activos registrados</td>
+                                    <td colspan="8" class="text-center">No hay activos registrados</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -180,57 +250,65 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_js %}
+{% if tiene_permisos and perms.inventario.view_activo %}
 <script>
     // Gráfico de categorías
-    const ctx = document.getElementById('categoriasChart').getContext('2d');
-    const categoriasData = {
-        labels: [{% for item in activos_por_categoria %}'{{ item.categoria__nombre }}',{% endfor %}],
-        datasets: [{
-            label: 'Cantidad de activos',
-            data: [{% for item in activos_por_categoria %}{{ item.total }},{% endfor %}],
-            backgroundColor: [
-                '#1A73E8', '#66BB6A', '#EF5350', '#FFA726', '#17c1e8', 
-                '#49a3f1', '#7c3aed', '#ec4899', '#f97316', '#14b8a6'
-            ],
-            borderRadius: 6,
-            borderWidth: 0
-        }]
-    };
+    const ctx = document.getElementById('categoriasChart');
+    if (ctx) {
+        const categoriasData = {
+            labels: [{% for item in activos_por_categoria %}'{{ item.categoria__nombre }}',{% endfor %}],
+            datasets: [{
+                label: 'Cantidad de activos',
+                data: [{% for item in activos_por_categoria %}{{ item.total }},{% endfor %}],
+                backgroundColor: [
+                    '#1A73E8', '#66BB6A', '#EF5350', '#FFA726', '#17c1e8', 
+                    '#49a3f1', '#7c3aed', '#ec4899', '#f97316', '#14b8a6'
+                ],
+                borderRadius: 6,
+                borderWidth: 0
+            }]
+        };
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: categoriasData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        color: '#7b809a'
-                    },
-                    grid: {
-                        color: 'rgba(0,0,0,0.05)'
+        new Chart(ctx, {
+            type: 'bar',
+            data: categoriasData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 },
-                x: {
-                    ticks: {
-                        color: '#7b809a'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            color: '#7b809a'
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
                     },
-                    grid: {
-                        display: false
+                    x: {
+                        ticks: {
+                            color: '#7b809a'
+                        },
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 </script>
+{% endif %}
 {% endblock %}

@@ -21,16 +21,7 @@ def login_view(request):
                 login(request, user)
                 full_name = user.get_full_name() or user.username
                 messages.success(request, f'¡Bienvenido {full_name}!')
-                
-                # Redirección basada en el rol
-                if user.is_superuser:
-                    return redirect('core:dashboard_director')
-                elif user.groups.filter(name='DirectorTI').exists():
-                    return redirect('core:dashboard_director')
-                elif user.groups.filter(name='Asistente').exists():
-                    return redirect('core:dashboard_asistente')
-                else:
-                    return redirect('core:dashboard_basico')
+                return redirect('core:dashboard')
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos')
         else:

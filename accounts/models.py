@@ -8,7 +8,6 @@ class Perfil(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     departamento = models.CharField(max_length=100, blank=True, null=True)
     cargo = models.CharField(max_length=100, blank=True, null=True)
-    foto = models.ImageField(upload_to='perfiles/', blank=True, null=True)
     
     def __str__(self):
         return f"Perfil de {self.usuario.username}"
@@ -17,8 +16,9 @@ class Perfil(models.Model):
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     if created:
-        Perfil.objects.create(usuario=instance)
+        Perfil.objects.get_or_create(usuario=instance)
 
 @receiver(post_save, sender=User)
 def guardar_perfil_usuario(sender, instance, **kwargs):
-    instance.perfil.save()
+    perfil, _ = Perfil.objects.get_or_create(usuario=instance)
+    perfil.save()

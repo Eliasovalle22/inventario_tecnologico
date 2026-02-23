@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from inventario.models import Activo
@@ -8,111 +8,73 @@ from catalogos.models import Estado
 
 @login_required
 def dashboard(request):
-    """Vista principal del dashboard - Redirige según el rol"""
-    if request.user.is_superuser:
-        return redirect('core:dashboard_director')
-    elif request.user.groups.filter(name='DirectorTI').exists():
-        return redirect('core:dashboard_director')
-    elif request.user.groups.filter(name='Asistente').exists():
-        return redirect('core:dashboard_asistente')
-    else:
-        return redirect('core:dashboard_basico')
-
-@login_required
-def dashboard_director(request):
-    """Dashboard para Directores TI y Superusuarios"""
-    try:
-        total_activos = Activo.objects.count()
-    except:
-        total_activos = 0
+    """Dashboard unificado - muestra secciones según permisos del usuario"""
+    user = request.user
+    context = {}
     
-    # Activos por estado
-    activos_por_estado = []
-    try:
-        estados = Estado.objects.all()
-        for estado in estados:
-            count = Activo.objects.filter(estado=estado).count()
-            activos_por_estado.append({
-                'estado': estado.nombre,
-                'count': count,
-                'color': estado.color
-            })
-    except:
-        pass
+    # Verificar si tiene algún permiso relevante
+    tiene_permisos = (
+        user.is_superuser or
+        user.has_perm('inventario.view_activo') or
+        user.has_perm('asignaciones.view_asignacion') or
+        user.has_perm('movimientos.view_movimiento')
+    )
+    context['tiene_permisos'] = tiene_permisos
     
-    # Últimos movimientos
-    try:
-        ultimos_movimientos = Movimiento.objects.select_related(
-            'activo', 'usuario'
-        ).order_by('-fecha')[:10]
-    except:
-        ultimos_movimientos = []
+    if not tiene_permisos:
+        context['mensaje'] = 'No tienes permisos asignados. Contacta al administrador.'
+        return render(request, 'core/dashboard.html', context)
     
-    # Activos recientes
-    try:
-        activos_recientes = Activo.objects.select_related(
-            'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
-        ).order_by('-fecha_creacion')[:10]
-    except:
-        activos_recientes = []
+    # --- Sección: KPIs y estadísticas (inventario) ---
+    if user.has_perm('inventario.view_activo') or user.is_superuser:
+        try:
+            context['total_activos'] = Activo.objects.count()
+            
+            # Activos por estado
+            activos_por_estado = []
+            for estado in Estado.objects.all():
+                count = Activo.objects.filter(estado=estado).count()
+                activos_por_estado.append({
+                    'estado': estado.nombre,
+                    'count': count,
+                    'color': estado.color
+                })
+            context['activos_por_estado'] = activos_por_estado
+            
+            # Activos por categoría para el gráfico
+            context['activos_por_categoria'] = Activo.objects.values(
+                'categoria__nombre'
+            ).annotate(total=Count('id')).order_by('-total')
+            
+            # Activos recientes
+            context['activos_recientes'] = Activo.objects.select_related(
+                'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
+            ).order_by('-fecha_creacion')[:10]
+        except:
+            context['total_activos'] = 0
+            context['activos_por_estado'] = []
+            context['activos_por_categoria'] = []
+            context['activos_recientes'] = []
     
-    # Activos por categoría para el gráfico
-    try:
-        activos_por_categoria = Activo.objects.values(
-            'categoria__nombre'
-        ).annotate(total=Count('id')).order_by('-total')
-    except:
-        activos_por_categoria = []
+    # --- Sección: Movimientos ---
+    if user.has_perm('movimientos.view_movimiento') or user.is_superuser:
+        try:
+            context['ultimos_movimientos'] = Movimiento.objects.select_related(
+                'activo', 'usuario'
+            ).order_by('-fecha')[:10]
+        except:
+            context['ultimos_movimientos'] = []
     
-    context = {
-        'total_activos': total_activos,
-        'activos_por_estado': activos_por_estado,
-        'ultimos_movimientos': ultimos_movimientos,
-        'activos_recientes': activos_recientes,
-        'activos_por_categoria': activos_por_categoria,
-    }
-    return render(request, 'core/dashboard_director.html', context)
-
-@login_required
-def dashboard_asistente(request):
-    """Dashboard para Asistentes"""
-    try:
-        activos_disponibles = Activo.objects.filter(estado__nombre='Disponible').count()
-        activos_asignados = Activo.objects.filter(estado__nombre='Asignado').count()
-        mis_asignaciones = Asignacion.objects.filter(
-            usuario_asignado=request.user,
-            activo_actual=True
-        ).count()
-    except:
-        activos_disponibles = 0
-        activos_asignados = 0
-        mis_asignaciones = 0
+    # --- Sección: Asignaciones ---
+    if user.has_perm('asignaciones.view_asignacion') or user.is_superuser:
+        try:
+            context['total_asignaciones_activas'] = Asignacion.objects.filter(activo_actual=True).count()
+            context['mis_asignaciones'] = Asignacion.objects.filter(
+                usuario_asignado=user,
+                activo_actual=True
+            ).count()
+        except:
+            context['total_asignaciones_activas'] = 0
+            context['mis_asignaciones'] = 0
     
-    try:
-        ultimos_movimientos = Movimiento.objects.filter(
-            usuario=request.user
-        ).select_related('activo').order_by('-fecha')[:10]
-    except:
-        ultimos_movimientos = []
-    
-    try:
-        activos_recientes = Activo.objects.all().order_by('-fecha_creacion')[:10]
-    except:
-        activos_recientes = []
-    
-    context = {
-        'activos_disponibles': activos_disponibles,
-        'activos_asignados': activos_asignados,
-        'mis_asignaciones': mis_asignaciones,
-        'ultimos_movimientos': ultimos_movimientos,
-        'activos_recientes': activos_recientes,
-    }
-    return render(request, 'core/dashboard_asistente.html', context)
-
-@login_required
-def dashboard_basico(request):
-    """Dashboard para usuarios sin permisos específicos"""
-    context = {
-        'mensaje': 'No tienes permisos asignados. Contacta al administrador.'
-    }
-    return render(request, 'core/dashboard_basico.html', context)
+    return render(request, 'core/dashboard.html', context)
