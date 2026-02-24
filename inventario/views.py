@@ -21,7 +21,6 @@ def lista_activos(request):
     if query:
         activos_list = activos_list.filter(
             Q(codigo__icontains=query) |
-            Q(serial__icontains=query) |
             Q(modelo__icontains=query) |
             Q(marca__nombre__icontains=query) |
             Q(responsable__first_name__icontains=query) |

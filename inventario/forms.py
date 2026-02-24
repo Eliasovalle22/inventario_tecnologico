@@ -7,7 +7,7 @@ class ActivoForm(forms.ModelForm):
     class Meta:
         model = Activo
         fields = '__all__'
-        exclude = ['creado_por', 'fecha_creacion', 'fecha_actualizacion']
+        exclude = ['creado_por', 'fecha_creacion', 'fecha_actualizacion', 'serial']
         widgets = {
             'fecha_compra': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
@@ -18,8 +18,8 @@ class ActivoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Personalizar los campos
         self.fields['codigo'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Ej: ACT-001'})
+        self.fields['codigo'].required = True
         self.fields['tipo'].widget.attrs.update({'class': 'form-select'})
-        self.fields['serial'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Número de serie'})
         self.fields['modelo'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Modelo del equipo'})
         self.fields['valor_compra'].widget.attrs.update({'class': 'form-control', 'placeholder': '0.00'})
         self.fields['garantia_meses'].widget.attrs.update({'class': 'form-control', 'min': 0})
@@ -61,7 +61,6 @@ class ActivoForm(forms.ModelForm):
         self.fields['responsable'].required = False
         
         # Hacer algunos campos opcionales
-        self.fields['serial'].required = False
         self.fields['valor_compra'].required = False
         self.fields['proveedor'].required = False
         self.fields['factura'].required = False
