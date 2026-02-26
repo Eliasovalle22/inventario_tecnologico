@@ -9,7 +9,7 @@ class ActivoForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['creado_por', 'fecha_creacion', 'fecha_actualizacion', 'serial']
         widgets = {
-            'fecha_compra': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_compra': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'especificaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Ingrese especificaciones: procesador, RAM, disco, etc.'}),
         }
