@@ -87,7 +87,7 @@
                             </a>
                             <div>
                                 {% if not activo %}
-                                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#confirmarGuardarModal">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmarGuardarModal">
                                     <i class="fas fa-save"></i> {{ boton }}
                                 </button>
                                 {% else %}
@@ -103,25 +103,30 @@
                     <!-- Modal de confirmación -->
                     <div class="modal fade" id="confirmarGuardarModal" tabindex="-1" aria-labelledby="confirmarGuardarModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="confirmarGuardarModalLabel">
-                                        <i class="fas fa-save me-2"></i>Guardar Activo
+                            <div class="modal-content" style="border-radius: var(--app-radius-lg); overflow: hidden;">
+                                <div class="modal-header" style="background: var(--app-info-gradient); border-bottom: none; padding: 1.25rem 1.5rem;">
+                                    <h5 class="modal-title" id="confirmarGuardarModalLabel" style="color: white; font-weight: 700; font-size: 1rem;">
+                                        <i class="fas fa-check-circle me-2"></i>Activo registrado
                                     </h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <p class="mb-0">El activo se guardará exitosamente. ¿Desea registrar un nuevo activo después?</p>
+                                <div class="modal-body" style="padding: 1.5rem;">
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-question-circle" style="font-size: 2.5rem; color: var(--app-accent);"></i>
+                                    </div>
+                                    <p class="text-center mb-0" style="color: var(--app-text); font-size: 0.95rem;">
+                                        ¿Desea registrar un nuevo activo?
+                                    </p>
                                 </div>
-                                <div class="modal-footer">
+                                <div class="modal-footer" style="border-top: 1px solid var(--app-border); padding: 1rem 1.5rem; justify-content: center; gap: 0.5rem;">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         <i class="fas fa-times"></i> Cancelar
                                     </button>
                                     <button type="button" class="btn btn-primary" id="btnGuardarSolo">
-                                        <i class="fas fa-save"></i> Guardar
+                                        <i class="fas fa-save"></i> No, solo guardar
                                     </button>
                                     <button type="button" class="btn btn-success" id="btnGuardarYNuevo">
-                                        <i class="fas fa-plus-circle"></i> Guardar y crear otro
+                                        <i class="fas fa-plus-circle"></i> Sí, crear otro
                                     </button>
                                 </div>
                             </div>
