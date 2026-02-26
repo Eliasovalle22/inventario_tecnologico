@@ -85,14 +85,77 @@
                             <a href="{% url 'inventario:lista' %}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> {{ boton }}
-                            </button>
+                            <div>
+                                {% if not activo %}
+                                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#confirmarGuardarModal">
+                                    <i class="fas fa-save"></i> {{ boton }}
+                                </button>
+                                {% else %}
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ boton }}
+                                </button>
+                                {% endif %}
+                            </div>
                         </div>
                     </form>
+
+                    {% if not activo %}
+                    <!-- Modal de confirmación -->
+                    <div class="modal fade" id="confirmarGuardarModal" tabindex="-1" aria-labelledby="confirmarGuardarModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="confirmarGuardarModalLabel">
+                                        <i class="fas fa-save me-2"></i>Guardar Activo
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">El activo se guardará exitosamente. ¿Desea registrar un nuevo activo después?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="btnGuardarSolo">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-success" id="btnGuardarYNuevo">
+                                        <i class="fas fa-plus-circle"></i> Guardar y crear otro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if not activo %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[method="post"]');
+        
+        // Botón "Guardar" (solo guardar, redirige al detalle)
+        document.getElementById('btnGuardarSolo').addEventListener('click', function() {
+            form.submit();
+        });
+        
+        // Botón "Guardar y crear otro"
+        document.getElementById('btnGuardarYNuevo').addEventListener('click', function() {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'guardar_y_nuevo';
+            input.value = '1';
+            form.appendChild(input);
+            form.submit();
+        });
+    });
+</script>
+{% endif %}
 {% endblock %}

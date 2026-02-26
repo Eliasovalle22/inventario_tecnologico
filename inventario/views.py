@@ -99,6 +99,10 @@ def crear_activo(request):
             )
             
             messages.success(request, f'Activo {activo.codigo} creado exitosamente.')
+            
+            if 'guardar_y_nuevo' in request.POST:
+                return redirect('inventario:crear')
+            
             return redirect('inventario:detalle', pk=activo.pk)
     else:
         form = ActivoForm()
