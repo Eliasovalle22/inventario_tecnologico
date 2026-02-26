@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+from django.core.exceptions import ImproperlyConfigured
 from decouple import config
 from pathlib import Path
 
@@ -21,12 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get("SECRET_KEY") or config("SECRET_KEY", default=None)
+if not SECRET_KEY:
+    raise ImproperlyConfigured("SECRET_KEY is not set. Define it in environment or .env")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = str(config("DEBUG", default="False")).lower() in ["true", "1", "yes"]
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('DB_HOST')]
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="http://localhost:8000,http://127.0.0.1:8000"
+).split(",")
 
 
 # Application definition
@@ -136,9 +143,12 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATIC_URL = '/static_inventario/'
+STATIC_ROOT = BASE_DIR / "staticfiles_inventario"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
 
 # Media files
 MEDIA_URL = '/media/'
