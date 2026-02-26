@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Categoria, Marca, Ubicacion, Estado
+from .models import Categoria, Marca, Ubicacion, Estado, TipoActivo
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
@@ -43,3 +43,10 @@ class EstadoAdmin(admin.ModelAdmin):
         )
     colored_name.short_description = 'Estado'
     colored_name.allow_tags = True
+
+@admin.register(TipoActivo)
+class TipoActivoAdmin(admin.ModelAdmin):
+    list_display = ['id', 'nombre', 'descripcion']
+    list_display_links = ['nombre']
+    search_fields = ['nombre']
+    ordering = ['nombre']

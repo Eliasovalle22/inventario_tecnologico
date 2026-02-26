@@ -73,7 +73,7 @@ def reporte_inventario(request):
     """Vista de reporte de inventario con filtros"""
     
     activos = Activo.objects.select_related(
-        'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
+        'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
     ).all()
     
     # Filtros
@@ -134,12 +134,12 @@ def exportar_inventario_excel(request):
     
     # Datos
     activos = Activo.objects.select_related(
-        'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
+        'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
     ).all()
     
     for row, activo in enumerate(activos, 2):
         ws.cell(row=row, column=1, value=activo.codigo)
-        ws.cell(row=row, column=2, value=activo.get_tipo_display())
+        ws.cell(row=row, column=2, value=str(activo.tipo))
         ws.cell(row=row, column=3, value=activo.marca.nombre)
         ws.cell(row=row, column=4, value=activo.modelo)
         ws.cell(row=row, column=5, value=activo.serial or '')
@@ -169,7 +169,7 @@ def exportar_inventario_pdf(request):
     """Exportar inventario a PDF"""
     
     activos = Activo.objects.select_related(
-        'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
+        'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
     ).all()
     
     # Estadísticas
@@ -438,7 +438,7 @@ def reporte_por_responsable(request, user_id):
     responsable = get_object_or_404(User, pk=user_id)
     activos = Activo.objects.filter(
         responsable=responsable
-    ).select_related('categoria', 'marca', 'estado', 'ubicacion')
+    ).select_related('tipo', 'categoria', 'marca', 'estado', 'ubicacion')
     
     context = {
         'responsable': responsable,
@@ -465,7 +465,7 @@ def exportar_responsable_excel(request, user_id):
     
     for row, activo in enumerate(activos, 2):
         ws.cell(row=row, column=1, value=activo.codigo)
-        ws.cell(row=row, column=2, value=activo.get_tipo_display())
+        ws.cell(row=row, column=2, value=str(activo.tipo))
         ws.cell(row=row, column=3, value=activo.marca.nombre)
         ws.cell(row=row, column=4, value=activo.modelo)
         ws.cell(row=row, column=5, value=activo.serial or '')

@@ -51,3 +51,15 @@ class Estado(models.Model):
     
     def __str__(self):
         return self.nombre
+
+class TipoActivo(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    
+    class Meta:
+        verbose_name = "Tipo de Activo"
+        verbose_name_plural = "Tipos de Activo"
+        ordering = ['nombre']
+    
+    def __str__(self):
+        return self.nombre

@@ -27,4 +27,10 @@ urlpatterns = [
     path('estados/crear/', views.crear_estado, name='crear_estado'),
     path('estados/<int:pk>/editar/', views.editar_estado, name='editar_estado'),
     path('estados/<int:pk>/eliminar/', views.eliminar_estado, name='eliminar_estado'),
+    
+    # Tipos de Activo
+    path('tipos-activo/', views.lista_tipos_activo, name='tipos_activo'),
+    path('tipos-activo/crear/', views.crear_tipo_activo, name='crear_tipo_activo'),
+    path('tipos-activo/<int:pk>/editar/', views.editar_tipo_activo, name='editar_tipo_activo'),
+    path('tipos-activo/<int:pk>/eliminar/', views.eliminar_tipo_activo, name='eliminar_tipo_activo'),
 ]

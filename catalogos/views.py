@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .models import Categoria, Marca, Ubicacion, Estado
+from .models import Categoria, Marca, Ubicacion, Estado, TipoActivo
 
 # ========== CATEGORÍAS ==========
 @login_required
@@ -194,3 +194,48 @@ def eliminar_estado(request, pk):
     estado.delete()
     messages.success(request, 'Estado eliminado exitosamente')
     return redirect('catalogos:estados')
+
+# ========== TIPOS DE ACTIVO ==========
+@login_required
+@permission_required('catalogos.view_tipoactivo', raise_exception=True)
+def lista_tipos_activo(request):
+    tipos = TipoActivo.objects.all().order_by('nombre')
+    return render(request, 'catalogos/tipos_activo.html', {'tipos': tipos})
+
+@login_required
+@permission_required('catalogos.add_tipoactivo', raise_exception=True)
+def crear_tipo_activo(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        if nombre:
+            TipoActivo.objects.create(nombre=nombre, descripcion=descripcion)
+            messages.success(request, 'Tipo de activo creado exitosamente')
+            return redirect('catalogos:tipos_activo')
+        else:
+            messages.error(request, 'El nombre es obligatorio')
+    return render(request, 'catalogos/tipo_activo_form.html')
+
+@login_required
+@permission_required('catalogos.change_tipoactivo', raise_exception=True)
+def editar_tipo_activo(request, pk):
+    tipo = get_object_or_404(TipoActivo, pk=pk)
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            tipo.nombre = nombre
+            tipo.descripcion = request.POST.get('descripcion')
+            tipo.save()
+            messages.success(request, 'Tipo de activo actualizado exitosamente')
+            return redirect('catalogos:tipos_activo')
+        else:
+            messages.error(request, 'El nombre es obligatorio')
+    return render(request, 'catalogos/tipo_activo_form.html', {'tipo': tipo})
+
+@login_required
+@permission_required('catalogos.delete_tipoactivo', raise_exception=True)
+def eliminar_tipo_activo(request, pk):
+    tipo = get_object_or_404(TipoActivo, pk=pk)
+    tipo.delete()
+    messages.success(request, 'Tipo de activo eliminado exitosamente')
+    return redirect('catalogos:tipos_activo')

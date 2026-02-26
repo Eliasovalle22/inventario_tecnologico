@@ -6,14 +6,14 @@ from .models import Activo
 from .forms import ActivoForm
 from movimientos.models import Movimiento
 from django.core.paginator import Paginator
-from catalogos.models import Estado
+from catalogos.models import Estado, TipoActivo
 
 @login_required
 @permission_required('inventario.view_activo', raise_exception=True)
 def lista_activos(request):
     # Obtener todos los activos con relaciones
     activos_list = Activo.objects.select_related(
-        'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
+        'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
     ).all().order_by('-fecha_creacion')
     
     # Búsqueda
@@ -34,7 +34,7 @@ def lista_activos(request):
     
     tipo = request.GET.get('tipo')
     if tipo:
-        activos_list = activos_list.filter(tipo=tipo)
+        activos_list = activos_list.filter(tipo_id=tipo)
     
     # Paginación
     paginator = Paginator(activos_list, 10)  # 10 activos por página
@@ -43,7 +43,7 @@ def lista_activos(request):
     
     # Obtener listas para filtros
     estados = Estado.objects.all()
-    tipos = Activo.TIPO_ACTIVO
+    tipos = TipoActivo.objects.all()
     
     context = {
         'activos': activos,
@@ -60,7 +60,7 @@ def lista_activos(request):
 def detalle_activo(request, pk):
     activo = get_object_or_404(
         Activo.objects.select_related(
-            'categoria', 'marca', 'estado', 'ubicacion', 'responsable', 'creado_por'
+            'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable', 'creado_por'
         ),
         pk=pk
     )

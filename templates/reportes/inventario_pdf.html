@@ -42,7 +42,7 @@
             {% for activo in activos %}
             <tr>
                 <td>{{ activo.codigo }}</td>
-                <td>{{ activo.get_tipo_display }}</td>
+                <td>{{ activo.tipo }}</td>
                 <td>{{ activo.marca.nombre }} {{ activo.modelo }}</td>
                 <td>{{ activo.estado.nombre }}</td>
                 <td>{{ activo.ubicacion.nombre }}</td>

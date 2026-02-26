@@ -3,21 +3,9 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 class Activo(models.Model):
-    TIPO_ACTIVO = [
-        ('LAPTOP', 'Laptop'),
-        ('PC', 'Computador de escritorio'),
-        ('MONITOR', 'Monitor'),
-        ('IMPRESORA', 'Impresora'),
-        ('SWITCH', 'Switch'),
-        ('ROUTER', 'Router'),
-        ('SERVER', 'Servidor'),
-        ('CELULAR', 'Celular'),
-        ('OTRO', 'Otro'),
-    ]
-    
     # Identificación
     codigo = models.CharField(max_length=50, unique=True, verbose_name="Código/Inventario")
-    tipo = models.CharField(max_length=20, choices=TIPO_ACTIVO, default='OTRO')
+    tipo = models.ForeignKey('catalogos.TipoActivo', on_delete=models.PROTECT)
     serial = models.CharField(max_length=100, blank=True, null=True)
     
     # Especificaciones

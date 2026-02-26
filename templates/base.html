@@ -82,6 +82,9 @@
                                 {% if perms.catalogos.view_estado %}
                                 <li><a class="dropdown-item" href="{% url 'catalogos:estados' %}">Estados</a></li>
                                 {% endif %}
+                                {% if perms.catalogos.view_tipoactivo %}
+                                <li><a class="dropdown-item" href="{% url 'catalogos:tipos_activo' %}">Tipos de Activo</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                         {% endif %}
