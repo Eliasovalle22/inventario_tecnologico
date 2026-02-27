@@ -3,6 +3,12 @@
 
 {% block title %}{{ titulo }}{% endblock %}
 
+{% block extra_css %}
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -141,6 +147,48 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
+<script>
+    $(document).ready(function() {
+        // Select2 para campo Tipo
+        $('.select2-tipo').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar tipo de activo...',
+            allowClear: true,
+            language: 'es',
+            width: '100%'
+        });
+
+        // Select2 para campo Categoría
+        $('.select2-categoria').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar categoría...',
+            allowClear: true,
+            language: 'es',
+            width: '100%'
+        });
+
+        // Select2 para campo Marca
+        $('.select2-marca').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar marca...',
+            allowClear: true,
+            language: 'es',
+            width: '100%'
+        });
+
+        // Select2 para campo Responsable
+        $('.select2-responsable').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar responsable...',
+            allowClear: true,
+            language: 'es',
+            width: '100%'
+        });
+    });
+</script>
 {% if not activo %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
