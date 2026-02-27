@@ -46,6 +46,11 @@ def dashboard(request):
                 'categoria__nombre'
             ).annotate(total=Count('id')).order_by('-total')
             
+            # Activos por tipo para el gráfico
+            context['activos_por_tipo'] = Activo.objects.values(
+                'tipo__nombre'
+            ).annotate(total=Count('id')).order_by('-total')
+            
             # Activos recientes
             context['activos_recientes'] = Activo.objects.select_related(
                 'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
