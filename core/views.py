@@ -54,7 +54,7 @@ def dashboard(request):
             # Activos recientes
             context['activos_recientes'] = Activo.objects.select_related(
                 'tipo', 'categoria', 'marca', 'estado', 'ubicacion', 'responsable'
-            ).order_by('-fecha_creacion')[:10]
+            ).order_by('-fecha_creacion')
         except:
             context['total_activos'] = 0
             context['activos_por_estado'] = []

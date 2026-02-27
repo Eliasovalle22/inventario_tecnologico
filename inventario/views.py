@@ -5,7 +5,6 @@ from django.db.models import Q
 from .models import Activo
 from .forms import ActivoForm
 from movimientos.models import Movimiento
-from django.core.paginator import Paginator
 from catalogos.models import Estado, TipoActivo
 
 @login_required
@@ -36,17 +35,12 @@ def lista_activos(request):
     if tipo:
         activos_list = activos_list.filter(tipo_id=tipo)
     
-    # Paginación
-    paginator = Paginator(activos_list, 10)  # 10 activos por página
-    page_number = request.GET.get('page')
-    activos = paginator.get_page(page_number)
-    
     # Obtener listas para filtros
     estados = Estado.objects.all()
     tipos = TipoActivo.objects.all()
     
     context = {
-        'activos': activos,
+        'activos': activos_list,
         'estados': estados,
         'tipos': tipos,
         'query': query,
