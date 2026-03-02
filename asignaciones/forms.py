@@ -7,7 +7,7 @@ from django.utils import timezone
 class AsignacionForm(forms.ModelForm):
     class Meta:
         model = Asignacion
-        fields = ['activo', 'usuario_asignado', 'fecha_estimada_devolucion', 'motivo', 'observaciones', 'evidencias']
+        fields = ['activo', 'usuario_asignado', 'sede', 'ubicacion', 'fecha_estimada_devolucion', 'motivo', 'observaciones', 'evidencias']
         widgets = {
             'fecha_estimada_devolucion': forms.DateTimeInput(
                 attrs={'type': 'datetime-local', 'class': 'form-control'}
@@ -35,6 +35,16 @@ class AsignacionForm(forms.ModelForm):
         self.fields['usuario_asignado'].label_from_instance = lambda obj: f"{obj.get_full_name() or obj.username} ({obj.username})"
         self.fields['usuario_asignado'].widget.attrs.update({'class': 'form-select select2-field'})
         self.fields['usuario_asignado'].label = "Asignar a"
+        
+        # Sede
+        self.fields['sede'].widget.attrs.update({'class': 'form-select select2-field'})
+        self.fields['sede'].label = "Sede"
+        self.fields['sede'].required = False
+        
+        # Ubicación
+        self.fields['ubicacion'].widget.attrs.update({'class': 'form-select select2-field'})
+        self.fields['ubicacion'].label = "Ubicación específica"
+        self.fields['ubicacion'].required = False
         
         self.fields['evidencias'].required = False
         self.fields['evidencias'].label = "Evidencias (URL)"

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .models import Categoria, Marca, Ubicacion, Estado, TipoActivo
+from .models import Categoria, Marca, Ubicacion, Sede, Estado, TipoActivo
 
 # ========== CATEGORÍAS ==========
 @login_required
@@ -105,12 +105,10 @@ def lista_ubicaciones(request):
 def crear_ubicacion(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion')
         direccion = request.POST.get('direccion')
         if nombre:
             Ubicacion.objects.create(
                 nombre=nombre, 
-                descripcion=descripcion,
                 direccion=direccion
             )
             messages.success(request, 'Ubicación creada exitosamente')
@@ -127,7 +125,6 @@ def editar_ubicacion(request, pk):
         nombre = request.POST.get('nombre')
         if nombre:
             ubicacion.nombre = nombre
-            ubicacion.descripcion = request.POST.get('descripcion')
             ubicacion.direccion = request.POST.get('direccion')
             ubicacion.save()
             messages.success(request, 'Ubicación actualizada exitosamente')
@@ -143,6 +140,60 @@ def eliminar_ubicacion(request, pk):
     ubicacion.delete()
     messages.success(request, 'Ubicación eliminada exitosamente')
     return redirect('catalogos:ubicaciones')
+
+# ========== SEDES ==========
+@login_required
+@permission_required('catalogos.view_sede', raise_exception=True)
+def lista_sedes(request):
+    sedes = Sede.objects.all().order_by('nombre')
+    return render(request, 'catalogos/sedes.html', {'sedes': sedes})
+
+@login_required
+@permission_required('catalogos.add_sede', raise_exception=True)
+def crear_sede(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        direccion = request.POST.get('direccion')
+        ciudad = request.POST.get('ciudad')
+        if nombre:
+            Sede.objects.create(
+                nombre=nombre, 
+                descripcion=descripcion,
+                direccion=direccion,
+                ciudad=ciudad
+            )
+            messages.success(request, 'Sede creada exitosamente')
+            return redirect('catalogos:sedes')
+        else:
+            messages.error(request, 'El nombre es obligatorio')
+    return render(request, 'catalogos/sede_form.html')
+
+@login_required
+@permission_required('catalogos.change_sede', raise_exception=True)
+def editar_sede(request, pk):
+    sede = get_object_or_404(Sede, pk=pk)
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            sede.nombre = nombre
+            sede.descripcion = request.POST.get('descripcion')
+            sede.direccion = request.POST.get('direccion')
+            sede.ciudad = request.POST.get('ciudad')
+            sede.save()
+            messages.success(request, 'Sede actualizada exitosamente')
+            return redirect('catalogos:sedes')
+        else:
+            messages.error(request, 'El nombre es obligatorio')
+    return render(request, 'catalogos/sede_form.html', {'sede': sede})
+
+@login_required
+@permission_required('catalogos.delete_sede', raise_exception=True)
+def eliminar_sede(request, pk):
+    sede = get_object_or_404(Sede, pk=pk)
+    sede.delete()
+    messages.success(request, 'Sede eliminada exitosamente')
+    return redirect('catalogos:sedes')
 
 # ========== ESTADOS ==========
 @login_required

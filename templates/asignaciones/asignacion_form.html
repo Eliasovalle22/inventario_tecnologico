@@ -25,6 +25,16 @@
                         
                         {{ form.activo|as_crispy_field }}
                         {{ form.usuario_asignado|as_crispy_field }}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.sede|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.ubicacion|as_crispy_field }}
+                            </div>
+                        </div>
+                        
                         {{ form.motivo|as_crispy_field }}
                         {{ form.fecha_estimada_devolucion|as_crispy_field }}
                         {{ form.observaciones|as_crispy_field }}

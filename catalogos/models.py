@@ -28,12 +28,25 @@ class Marca(models.Model):
 
 class Ubicacion(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
     
     class Meta:
         verbose_name = "Ubicación"
         verbose_name_plural = "Ubicaciones"
+        ordering = ['nombre']
+    
+    def __str__(self):
+        return self.nombre
+
+class Sede(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    ciudad = models.CharField(max_length=100, blank=True, null=True)
+    
+    class Meta:
+        verbose_name = "Sede"
+        verbose_name_plural = "Sedes"
         ordering = ['nombre']
     
     def __str__(self):

@@ -22,6 +22,12 @@ urlpatterns = [
     path('ubicaciones/<int:pk>/editar/', views.editar_ubicacion, name='editar_ubicacion'),
     path('ubicaciones/<int:pk>/eliminar/', views.eliminar_ubicacion, name='eliminar_ubicacion'),
     
+    # Sedes
+    path('sedes/', views.lista_sedes, name='sedes'),
+    path('sedes/crear/', views.crear_sede, name='crear_sede'),
+    path('sedes/<int:pk>/editar/', views.editar_sede, name='editar_sede'),
+    path('sedes/<int:pk>/eliminar/', views.eliminar_sede, name='eliminar_sede'),
+    
     # Estados
     path('estados/', views.lista_estados, name='estados'),
     path('estados/crear/', views.crear_estado, name='crear_estado'),

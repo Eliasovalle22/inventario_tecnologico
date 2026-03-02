@@ -12,6 +12,20 @@ class Asignacion(models.Model):
         related_name='asignaciones_recibidas',
         verbose_name="Asignado a"
     )
+    sede = models.ForeignKey(
+        'catalogos.Sede',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        verbose_name="Sede"
+    )
+    ubicacion = models.ForeignKey(
+        'catalogos.Ubicacion',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        verbose_name="Ubicación"
+    )
     asignado_por = models.ForeignKey(
         User, 
         on_delete=models.PROTECT, 
