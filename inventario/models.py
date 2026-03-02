@@ -6,7 +6,6 @@ class Activo(models.Model):
     # Identificación
     codigo = models.CharField(max_length=50, unique=True, verbose_name="Código/Inventario")
     tipo = models.ForeignKey('catalogos.TipoActivo', on_delete=models.PROTECT)
-    serial = models.CharField(max_length=100, blank=True, null=True)
     
     # Especificaciones
     categoria = models.ForeignKey('catalogos.Categoria', on_delete=models.PROTECT)
@@ -56,7 +55,6 @@ class Activo(models.Model):
         ordering = ['-fecha_creacion']
         indexes = [
             models.Index(fields=['codigo']),
-            models.Index(fields=['serial']),
             models.Index(fields=['estado']),
         ]
     
