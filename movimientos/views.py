@@ -44,11 +44,6 @@ def lista_movimientos(request):
                 Q(usuario__last_name__icontains=usuario)
             )
     
-    # Paginación
-    paginator = Paginator(movimientos_list, 20)  # 20 movimientos por página
-    page_number = request.GET.get('page')
-    movimientos = paginator.get_page(page_number)
-    
     # Estadísticas rápidas
     total_movimientos = movimientos_list.count()
     movimientos_hoy = movimientos_list.filter(fecha__date=timezone.now().date()).count()
@@ -61,7 +56,7 @@ def lista_movimientos(request):
             tipos_count[tipo] = count
     
     context = {
-        'movimientos': movimientos,
+        'movimientos': movimientos_list,
         'filter_form': filter_form,
         'total_movimientos': total_movimientos,
         'movimientos_hoy': movimientos_hoy,

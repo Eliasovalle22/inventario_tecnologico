@@ -19,25 +19,27 @@
 
     <!-- Filtros -->
     <div class="card mb-4">
-        <div class="card-header bg-light">
-            <h6 class="m-0 font-weight-bold">Filtros</h6>
+        <div class="card-header bg-light py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-filter"></i> Filtros
+                </h6>
+                <button class="btn btn-sm btn-outline-secondary" id="btnLimpiar">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </button>
+            </div>
         </div>
         <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-3">
+            <div class="row g-3">
+                <div class="col-md-4">
                     <label class="form-label">Estado</label>
-                    <select name="estado" class="form-select">
-                        <option value="activas" {% if estado_filtro == 'activas' %}selected{% endif %}>Activas</option>
-                        <option value="devueltas" {% if estado_filtro == 'devueltas' %}selected{% endif %}>Devueltas</option>
-                        <option value="todas" {% if estado_filtro == 'todas' %}selected{% endif %}>Todas</option>
+                    <select id="filterEstado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="Activa">Activas</option>
+                        <option value="Devuelta">Devueltas</option>
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Filtrar
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -45,7 +47,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="tablaReporteAsig">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -102,4 +104,25 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    var table = $('#tablaReporteAsig').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
+    });
+
+    // Estado (columna 6)
+    $('#filterEstado').on('change', function() {
+        table.column(6).search(this.value).draw();
+    });
+
+    // Limpiar
+    $('#btnLimpiar').on('click', function() {
+        $('#filterEstado').val('');
+        table.search('').columns().search('').draw();
+    });
+});
+</script>
 {% endblock %}

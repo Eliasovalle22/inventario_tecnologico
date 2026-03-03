@@ -206,7 +206,7 @@ def reporte_asignaciones(request):
     ).all()
     
     # Filtros
-    estado = request.GET.get('estado', 'activas')
+    estado = request.GET.get('estado', 'todas')
     if estado == 'activas':
         asignaciones = asignaciones.filter(activo_actual=True)
     elif estado == 'devueltas':

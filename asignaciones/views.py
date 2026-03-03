@@ -64,11 +64,6 @@ def lista_asignaciones(request):
                 fecha_asignacion__date__lte=fecha_hasta
             )
     
-    # Paginación
-    paginator = Paginator(asignaciones_list, 15)
-    page_number = request.GET.get('page')
-    asignaciones = paginator.get_page(page_number)
-    
     # Estadísticas
     total_activas = Asignacion.objects.filter(activo_actual=True).count()
     total_vencidas = Asignacion.objects.filter(
@@ -80,8 +75,9 @@ def lista_asignaciones(request):
     ).distinct().count()
     
     context = {
-        'asignaciones': asignaciones,
+        'asignaciones': asignaciones_list,
         'filter_form': filter_form,
+        'total_asignaciones': asignaciones_list.count(),
         'total_activas': total_activas,
         'total_vencidas': total_vencidas,
         'total_usuarios': total_usuarios,

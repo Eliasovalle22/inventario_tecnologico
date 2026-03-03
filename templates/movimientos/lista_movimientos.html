@@ -52,12 +52,17 @@
     <!-- Filtros -->
     <div class="card shadow mb-4">
         <div class="card-header bg-light py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-filter"></i> Filtrar Movimientos
-            </h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-filter"></i> Filtrar Movimientos
+                </h6>
+                <button class="btn btn-sm btn-outline-secondary" id="btnLimpiar">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </button>
+            </div>
         </div>
         <div class="card-body">
-            <form method="get" class="row g-3">
+            <div class="row g-3">
                 <div class="col-md-2">
                     <label class="form-label">Fecha Desde</label>
                     {{ filter_form.fecha_desde }}
@@ -66,7 +71,7 @@
                     <label class="form-label">Fecha Hasta</label>
                     {{ filter_form.fecha_hasta }}
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Tipo</label>
                     {{ filter_form.tipo }}
                 </div>
@@ -78,12 +83,7 @@
                     <label class="form-label">Usuario</label>
                     {{ filter_form.usuario }}
                 </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -91,7 +91,7 @@
     <div class="card shadow">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="tablaMovimientos">
                     <thead>
                         <tr>
                             <th>FECHA</th>
@@ -164,41 +164,62 @@
                 </table>
             </div>
 
-            <!-- Paginación -->
-            {% if movimientos.has_other_pages %}
-            <nav aria-label="Page navigation" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    {% if movimientos.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ movimientos.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            Anterior
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for i in movimientos.paginator.page_range %}
-                        {% if movimientos.number == i %}
-                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ i }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                                {{ i }}
-                            </a>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if movimientos.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ movimientos.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            Siguiente
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Filtro personalizado para rango de fechas
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        if (settings.nTable.id !== 'tablaMovimientos') return true;
+        var min = $('#id_fecha_desde').val();
+        var max = $('#id_fecha_hasta').val();
+        if (!min && !max) return true;
+        var dateStr = data[0];
+        if (!dateStr || dateStr === '-') return true;
+        var parts = dateStr.trim().split(/[\/\s:]+/);
+        var cellDate = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
+        if (min && cellDate < new Date(min)) return false;
+        if (max && cellDate > new Date(max)) return false;
+        return true;
+    });
+
+    var table = $('#tablaMovimientos').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+        order: [[0, 'desc']]
+    });
+
+    // Tipo (columna 1) - usar texto de la opción
+    $('#id_tipo').on('change', function() {
+        var text = $(this).find('option:selected').text().trim();
+        if (!this.value) text = '';
+        table.column(1).search(text).draw();
+    });
+
+    // Activo (columna 2)
+    $('#id_activo').on('keyup', function() {
+        table.column(2).search(this.value).draw();
+    });
+
+    // Usuario (columna 3)
+    $('#id_usuario').on('keyup', function() {
+        table.column(3).search(this.value).draw();
+    });
+
+    // Fechas
+    $('#id_fecha_desde, #id_fecha_hasta').on('change', function() {
+        table.draw();
+    });
+
+    // Limpiar
+    $('#btnLimpiar').on('click', function() {
+        $('#id_fecha_desde, #id_fecha_hasta, #id_activo, #id_usuario').val('');
+        $('#id_tipo').val('');
+        table.search('').columns().search('').draw();
+    });
+});
+</script>
 {% endblock %}
