@@ -29,7 +29,7 @@
                             <h6>Información del Activo</h6>
                             <table class="table table-sm">
                                 <tr>
-                                    <th>Código:</th>
+                                    <th>Serial:</th>
                                     <td>
                                         <a href="{% url 'inventario:detalle' asignacion.activo.id %}">
                                             {{ asignacion.activo.codigo }}
@@ -43,10 +43,6 @@
                                 <tr>
                                     <th>Marca/Modelo:</th>
                                     <td>{{ asignacion.activo.marca.nombre }} {{ asignacion.activo.modelo }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Serial:</th>
-                                    <td>{{ asignacion.activo.serial|default:"-" }}</td>
                                 </tr>
                             </table>
                         </div>

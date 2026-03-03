@@ -40,7 +40,7 @@
                         <div class="col-md-6">
                             <table class="table table-sm">
                                 <tr>
-                                    <th>Código/Placa:</th>
+                                    <th>Serial:</th>
                                     <td>{{ activo.codigo }}</td>
                                 </tr>
                                 <tr>
@@ -87,7 +87,13 @@
                                 </tr>
                                 <tr>
                                     <th>Fecha Compra:</th>
-                                    <td>{{ activo.fecha_compra|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if activo.fecha_compra %}
+                                            {{ activo.fecha_compra|date:"d/m/Y" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Valor Compra:</th>
