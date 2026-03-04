@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from inventario.models import Activo
 from django.utils import timezone
+from catalogos.models import Estado, Ubicacion
 
 class Asignacion(models.Model):
 
@@ -82,6 +83,16 @@ class Asignacion(models.Model):
             
             # Actualizar el responsable en el activo
             self.activo.responsable = self.usuario_asignado
+            
+            # Cambiar estado del activo a "Asignado"
+            estado_asignado = Estado.objects.filter(nombre='Asignado').first()
+            if estado_asignado:
+                self.activo.estado = estado_asignado
+            
+            # Actualizar ubicación del activo si se indicó en la asignación
+            if self.ubicacion:
+                self.activo.ubicacion = self.ubicacion
+            
             self.activo.save()
         
         super().save(*args, **kwargs)
@@ -97,6 +108,17 @@ class Asignacion(models.Model):
         
         # Actualizar el activo
         self.activo.responsable = None
+        
+        # Restaurar estado del activo a "En bodega"
+        estado_bodega = Estado.objects.filter(nombre='En bodega').first()
+        if estado_bodega:
+            self.activo.estado = estado_bodega
+        
+        # Restaurar ubicación del activo a "En bodega"
+        ubicacion_bodega = Ubicacion.objects.filter(nombre='En bodega').first()
+        if ubicacion_bodega:
+            self.activo.ubicacion = ubicacion_bodega
+        
         self.activo.save()
         
         # Registrar movimiento

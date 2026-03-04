@@ -186,16 +186,22 @@ def devolver_asignacion(request, pk):
                 observaciones=form.cleaned_data['observaciones']
             )
             
-            # Actualizar estado del activo según condición
+            # Actualizar estado del activo según condición reportada
             activo = asignacion.activo
-            if form.cleaned_data['estado_activo'] == 'REPARACION':
+            estado_activo_form = form.cleaned_data['estado_activo']
+            if estado_activo_form == 'REPARACION':
                 estado_reparacion = Estado.objects.filter(nombre='En reparación').first()
                 if estado_reparacion:
                     activo.estado = estado_reparacion
-            elif form.cleaned_data['estado_activo'] == 'MALO':
+            elif estado_activo_form == 'MALO':
                 estado_malo = Estado.objects.filter(nombre='Malo').first()
                 if estado_malo:
                     activo.estado = estado_malo
+            else:
+                # Estado BUENO o REGULAR: restaurar a "En bodega"
+                estado_bodega = Estado.objects.filter(nombre='En bodega').first()
+                if estado_bodega:
+                    activo.estado = estado_bodega
             
             # Guardar observaciones del estado
             if form.cleaned_data['observaciones_estado']:
