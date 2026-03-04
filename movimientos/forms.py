@@ -17,7 +17,7 @@ class MovimientoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         # Personalizar campos
-        self.fields['activo'].queryset = Activo.objects.filter(estado__nombre__in=['Disponible', 'Asignado', 'En bodega'])
+        self.fields['activo'].queryset = Activo.objects.filter(estado__nombre__in=['DISPONIBLE', 'ASIGNADO', 'EN BODEGA'])
         self.fields['activo'].widget.attrs.update({'class': 'form-select'})
         
         self.fields['tipo'].widget.attrs.update({'class': 'form-select'})

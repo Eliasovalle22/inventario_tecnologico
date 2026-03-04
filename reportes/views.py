@@ -30,9 +30,9 @@ def dashboard_reportes(request):
     
     # Estadísticas generales
     total_activos = Activo.objects.count()
-    activos_asignados = Activo.objects.filter(estado__nombre='Asignado').count()
-    activos_disponibles = Activo.objects.filter(estado__nombre='Disponible').count()
-    activos_baja = Activo.objects.filter(estado__nombre='Dado de baja').count()
+    activos_asignados = Activo.objects.filter(estado__nombre='ASIGNADO').count()
+    activos_disponibles = Activo.objects.filter(estado__nombre='DISPONIBLE').count()
+    activos_baja = Activo.objects.filter(estado__nombre='DADO DE BAJA').count()
     
     # Asignaciones activas
     asignaciones_activas = Asignacion.objects.filter(activo_actual=True).count()
@@ -314,8 +314,8 @@ def reporte_categorias(request):
     
     categorias = Categoria.objects.annotate(
         total_activos=Count('activo'),
-        activos_asignados=Count('activo', filter=Q(activo__estado__nombre='Asignado')),
-        activos_disponibles=Count('activo', filter=Q(activo__estado__nombre='Disponible')),
+        activos_asignados=Count('activo', filter=Q(activo__estado__nombre='ASIGNADO')),
+        activos_disponibles=Count('activo', filter=Q(activo__estado__nombre='DISPONIBLE')),
         valor_total=Sum('activo__valor_compra')
     ).order_by('-total_activos')
     
@@ -348,8 +348,8 @@ def exportar_categorias_excel(request):
     # Datos
     categorias = Categoria.objects.annotate(
         total_activos=Count('activo'),
-        activos_asignados=Count('activo', filter=Q(activo__estado__nombre='Asignado')),
-        activos_disponibles=Count('activo', filter=Q(activo__estado__nombre='Disponible')),
+        activos_asignados=Count('activo', filter=Q(activo__estado__nombre='ASIGNADO')),
+        activos_disponibles=Count('activo', filter=Q(activo__estado__nombre='DISPONIBLE')),
         valor_total=Sum('activo__valor_compra')
     )
     

@@ -109,18 +109,18 @@ def crear_movimiento(request):
                 
             elif movimiento.tipo == 'ASIGNACION' and movimiento.responsable_nuevo:
                 activo.responsable = movimiento.responsable_nuevo
-                estado_asignado = Estado.objects.filter(nombre='Asignado').first()
+                estado_asignado = Estado.objects.filter(nombre='ASIGNADO').first()
                 if estado_asignado:
                     activo.estado = estado_asignado
                     
             elif movimiento.tipo == 'DEVOLUCION':
                 activo.responsable = None
-                estado_disponible = Estado.objects.filter(nombre='Disponible').first()
+                estado_disponible = Estado.objects.filter(nombre='DISPONIBLE').first()
                 if estado_disponible:
                     activo.estado = estado_disponible
                     
             elif movimiento.tipo == 'REPARACION':
-                estado_reparacion = Estado.objects.filter(nombre='En reparación').first()
+                estado_reparacion = Estado.objects.filter(nombre='EN REPARACIÓN').first()
                 if estado_reparacion:
                     activo.estado = estado_reparacion
             

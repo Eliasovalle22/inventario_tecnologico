@@ -23,7 +23,7 @@ class AsignacionForm(forms.ModelForm):
         
         # Activos disponibles
         self.fields['activo'].queryset = Activo.objects.filter(
-            estado__nombre__in=['Disponible', 'En bodega']
+            estado__nombre__in=['DISPONIBLE', 'EN BODEGA']
         ).select_related('marca')
         self.fields['activo'].widget.attrs.update({'class': 'form-select select2-field'})
         self.fields['activo'].label = "Activo a asignar"

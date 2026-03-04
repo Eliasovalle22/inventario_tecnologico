@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from core.models import UpperCaseMixin
 
-class Activo(models.Model):
+class Activo(UpperCaseMixin, models.Model):
     # Identificación
     codigo = models.CharField(max_length=50, unique=True, verbose_name="Código/Inventario")
     tipo = models.ForeignKey('catalogos.TipoActivo', on_delete=models.PROTECT)

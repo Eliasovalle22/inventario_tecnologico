@@ -49,12 +49,12 @@ class ActivoForm(forms.ModelForm):
         # Establecer "En bodega" como valor por defecto si es un nuevo activo
         if not self.instance.pk:
             try:
-                estado_bodega = Estado.objects.get(nombre='En bodega')
+                estado_bodega = Estado.objects.get(nombre='EN BODEGA')
                 self.fields['estado'].initial = estado_bodega.pk
             except Estado.DoesNotExist:
                 pass
             try:
-                ubicacion_bodega = Ubicacion.objects.get(nombre='En bodega')
+                ubicacion_bodega = Ubicacion.objects.get(nombre='EN BODEGA')
                 self.fields['ubicacion'].initial = ubicacion_bodega.pk
             except Ubicacion.DoesNotExist:
                 pass

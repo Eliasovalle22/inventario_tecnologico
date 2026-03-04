@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from core.models import UpperCaseMixin
 
-class Categoria(models.Model):
+class Categoria(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -14,7 +15,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
-class Marca(models.Model):
+class Marca(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     
@@ -26,7 +27,7 @@ class Marca(models.Model):
     def __str__(self):
         return self.nombre
 
-class Ubicacion(models.Model):
+class Ubicacion(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
     
@@ -38,7 +39,7 @@ class Ubicacion(models.Model):
     def __str__(self):
         return self.nombre
 
-class Sede(models.Model):
+class Sede(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
@@ -52,7 +53,7 @@ class Sede(models.Model):
     def __str__(self):
         return self.nombre
 
-class Estado(models.Model):
+class Estado(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     color = models.CharField(max_length=7, default='#6c757d', help_text='Código hexadecimal para el color')
@@ -65,7 +66,7 @@ class Estado(models.Model):
     def __str__(self):
         return self.nombre
 
-class TipoActivo(models.Model):
+class TipoActivo(UpperCaseMixin, models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     descripcion = models.TextField(blank=True, null=True)
     

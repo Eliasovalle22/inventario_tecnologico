@@ -118,7 +118,7 @@ def crear_asignacion(request):
         if activo_id:
             try:
                 activo = Activo.objects.get(pk=activo_id)
-                if activo.estado.nombre in ['Disponible', 'En bodega']:
+                if activo.estado.nombre in ['DISPONIBLE', 'EN BODEGA']:
                     initial['activo'] = activo
                 else:
                     messages.warning(request, 'Este activo no está disponible para asignación')
@@ -190,16 +190,16 @@ def devolver_asignacion(request, pk):
             activo = asignacion.activo
             estado_activo_form = form.cleaned_data['estado_activo']
             if estado_activo_form == 'REPARACION':
-                estado_reparacion = Estado.objects.filter(nombre='En reparación').first()
+                estado_reparacion = Estado.objects.filter(nombre='EN REPARACIÓN').first()
                 if estado_reparacion:
                     activo.estado = estado_reparacion
             elif estado_activo_form == 'MALO':
-                estado_malo = Estado.objects.filter(nombre='Malo').first()
+                estado_malo = Estado.objects.filter(nombre='MALO').first()
                 if estado_malo:
                     activo.estado = estado_malo
             else:
                 # Estado BUENO o REGULAR: restaurar a "En bodega"
-                estado_bodega = Estado.objects.filter(nombre='En bodega').first()
+                estado_bodega = Estado.objects.filter(nombre='EN BODEGA').first()
                 if estado_bodega:
                     activo.estado = estado_bodega
             

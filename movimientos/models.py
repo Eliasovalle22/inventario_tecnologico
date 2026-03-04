@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from inventario.models import Activo
 from catalogos.models import Ubicacion, Estado
 from django.utils import timezone
+from core.models import UpperCaseMixin
 
-class Movimiento(models.Model):
+class Movimiento(UpperCaseMixin, models.Model):
     TIPO_MOVIMIENTO = [
         ('ENTRADA', 'Entrada a inventario'),
         ('SALIDA', 'Salida de inventario'),

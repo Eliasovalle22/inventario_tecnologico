@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from inventario.models import Activo
 from django.utils import timezone
 from catalogos.models import Estado, Ubicacion
+from core.models import UpperCaseMixin
 
-class Asignacion(models.Model):
+class Asignacion(UpperCaseMixin, models.Model):
 
     activo = models.ForeignKey(Activo, on_delete=models.PROTECT, related_name='asignaciones')
     usuario_asignado = models.ForeignKey(
@@ -85,7 +86,7 @@ class Asignacion(models.Model):
             self.activo.responsable = self.usuario_asignado
             
             # Cambiar estado del activo a "Asignado"
-            estado_asignado = Estado.objects.filter(nombre='Asignado').first()
+            estado_asignado = Estado.objects.filter(nombre='ASIGNADO').first()
             if estado_asignado:
                 self.activo.estado = estado_asignado
             
@@ -110,12 +111,12 @@ class Asignacion(models.Model):
         self.activo.responsable = None
         
         # Restaurar estado del activo a "En bodega"
-        estado_bodega = Estado.objects.filter(nombre='En bodega').first()
+        estado_bodega = Estado.objects.filter(nombre='EN BODEGA').first()
         if estado_bodega:
             self.activo.estado = estado_bodega
         
         # Restaurar ubicación del activo a "En bodega"
-        ubicacion_bodega = Ubicacion.objects.filter(nombre='En bodega').first()
+        ubicacion_bodega = Ubicacion.objects.filter(nombre='EN BODEGA').first()
         if ubicacion_bodega:
             self.activo.ubicacion = ubicacion_bodega
         

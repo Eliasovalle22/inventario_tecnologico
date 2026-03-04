@@ -48,7 +48,7 @@ def registrar_movimiento_asignacion(sender, instance, created, **kwargs):
         
         # Actualizar el estado del activo
         activo = instance.activo
-        estado_asignado = Estado.objects.filter(nombre='Asignado').first()
+        estado_asignado = Estado.objects.filter(nombre='ASIGNADO').first()
         if estado_asignado:
             activo.estado = estado_asignado
             activo.responsable = instance.usuario_asignado

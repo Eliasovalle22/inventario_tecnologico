@@ -2,8 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from core.models import UpperCaseMixin
 
-class Perfil(models.Model):
+class Perfil(UpperCaseMixin, models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     telefono = models.CharField(max_length=20, blank=True, null=True)
     departamento = models.CharField(max_length=100, blank=True, null=True)
