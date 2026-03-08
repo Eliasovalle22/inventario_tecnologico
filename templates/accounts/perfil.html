@@ -43,47 +43,73 @@
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Perfil</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post">
+                </div>                <div class="card-body">
+                    <form method="post" novalidate>
                         {% csrf_token %}
                         
+                        {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <strong>Por favor corrige los siguientes errores:</strong>
+                            <ul class="mb-0 mt-1">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endif %}
+                        
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" name="first_name" class="form-control" 
-                                       value="{{ user.first_name }}" required>
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">Nombre</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Apellido</label>
-                                <input type="text" name="last_name" class="form-control" 
-                                       value="{{ user.last_name }}" required>
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Apellido</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" 
-                                       value="{{ user.email }}" required>
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Teléfono</label>
-                                <input type="text" name="telefono" class="form-control" 
-                                       value="{{ user.perfil.telefono }}">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                <div class="invalid-feedback d-block">{{ form.telefono.errors.0 }}</div>
+                                {% endif %}
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Departamento</label>
-                                <input type="text" name="departamento" class="form-control" 
-                                       value="{{ user.perfil.departamento }}">
+                                <label for="{{ form.departamento.id_for_label }}" class="form-label">Departamento</label>
+                                {{ form.departamento }}
+                                {% if form.departamento.errors %}
+                                <div class="invalid-feedback d-block">{{ form.departamento.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Cargo</label>
-                                <input type="text" name="cargo" class="form-control" 
-                                       value="{{ user.perfil.cargo }}">
+                                <label for="{{ form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                                {{ form.cargo }}
+                                {% if form.cargo.errors %}
+                                <div class="invalid-feedback d-block">{{ form.cargo.errors.0 }}</div>
+                                {% endif %}
                             </div>
                         </div>
                         

@@ -46,9 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Local apps
+    # Third-party apps
     'crispy_forms',
     'crispy_bootstrap5',
+    'axes',
+    
+    # Local apps
     'accounts',
     'core',
     'inventario',
@@ -56,11 +59,6 @@ INSTALLED_APPS = [
     'movimientos',
     'catalogos',
     'reportes',
-    
-    
-    
-    
-    
 ]
 
 MIDDLEWARE = [
@@ -71,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
     'accounts.middleware.SessionTimeoutMiddleware',
 ]
 
@@ -120,12 +119,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 10,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        'NAME': 'accounts.validators.UppercaseValidator',
+    },
+    {
+        'NAME': 'accounts.validators.SpecialCharacterValidator',
     },
 ]
 
@@ -172,3 +180,86 @@ SESSION_INACTIVITY_TIMEOUT = 1800  # 30 minutos
 SESSION_COOKIE_AGE = 7200
 # Guardar la sesión en cada solicitud para actualizar el tiempo de inactividad
 SESSION_SAVE_EVERY_REQUEST = True
+
+# ============================================================================
+# CONFIGURACIÓN DE SEGURIDAD
+# ============================================================================
+
+# --- Cookies de sesión seguras ---
+SESSION_COOKIE_HTTPONLY = True       # Impide acceso a la cookie desde JavaScript
+SESSION_COOKIE_SAMESITE = 'Lax'     # Protección contra CSRF en cookies
+SESSION_COOKIE_SECURE = not DEBUG    # Solo HTTPS en producción
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Sesiones en base de datos
+
+# --- Cookie CSRF segura ---
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG
+
+# --- Headers de seguridad HTTP ---
+SECURE_BROWSER_XSS_FILTER = True            # Activa filtro XSS del navegador
+SECURE_CONTENT_TYPE_NOSNIFF = True           # Previene MIME-type sniffing
+X_FRAME_OPTIONS = 'DENY'                    # Previene clickjacking (iframe)
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# --- HTTPS en producción ---
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True               # Redirige HTTP → HTTPS
+    SECURE_HSTS_SECONDS = 31536000           # 1 año de HSTS
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# --- Backends de autenticación (axes + Django) ---
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# ============================================================================
+# DJANGO-AXES — Protección contra fuerza bruta
+# ============================================================================
+AXES_FAILURE_LIMIT = 5                      # Bloquear después de 5 intentos fallidos
+AXES_COOLOFF_TIME = 0.5                     # Bloqueo de 30 minutos (en horas)
+AXES_LOCK_OUT_AT_FAILURE = True             # Activar bloqueo
+AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']  # Bloquear por nombre de usuario e IP
+AXES_RESET_ON_SUCCESS = True                # Resetear conteo al iniciar sesión correctamente
+AXES_ENABLE_ACCESS_FAILURE_LOG = True       # Log de intentos fallidos
+AXES_LOCKOUT_CALLABLE = 'accounts.views.axes_lockout_view'  # Vista personalizada de bloqueo
+
+# --- Logging de seguridad ---
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'security': {
+            'format': '[{asctime}] SEGURIDAD {levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'security.log',
+            'formatter': 'security',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'security',
+        },
+    },
+    'loggers': {
+        'axes': {
+            'handlers': ['security_file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
