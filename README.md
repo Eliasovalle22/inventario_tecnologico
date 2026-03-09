@@ -28,6 +28,8 @@
 # Ejecución 
     - python manage.py runserver
 
+# Recolectar archivos estaticos
+    - python manage.py collectstatic
 
 # Login
 

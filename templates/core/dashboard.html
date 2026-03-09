@@ -151,59 +151,6 @@
         </div>
         {% endif %}
 
-        <!-- ============ Últimos movimientos ============ -->
-        {% if perms.movimientos.view_movimiento %}
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Últimos Movimientos</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>ACTIVO</th>
-                                    <th>TIPO</th>
-                                    <th>USUARIO</th>
-                                    <th>FECHA</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for movimiento in ultimos_movimientos %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'inventario:detalle' movimiento.activo.id %}">
-                                            {{ movimiento.activo.codigo }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="badge 
-                                            {% if movimiento.tipo == 'ENTRADA' %}bg-success
-                                            {% elif movimiento.tipo == 'SALIDA' %}bg-warning
-                                            {% elif movimiento.tipo == 'ASIGNACION' %}bg-primary
-                                            {% elif movimiento.tipo == 'DEVOLUCION' %}bg-info
-                                            {% else %}bg-secondary{% endif %}">
-                                            {{ movimiento.get_tipo_display }}
-                                        </span>
-                                    </td>
-                                    <td>{{ movimiento.usuario.get_full_name|default:movimiento.usuario.username }}</td>
-                                    <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="4" class="text-center">No hay movimientos recientes</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
     <!-- ============ Activos recientes ============ -->
     {% if perms.inventario.view_activo %}
     <div class="row">
