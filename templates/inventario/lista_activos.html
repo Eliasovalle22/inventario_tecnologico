@@ -8,11 +8,16 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><i class="fas fa-laptop"></i> Activos Tecnológicos</h1>
-        {% if perms.inventario.add_activo %}
-        <a href="{% url 'inventario:crear' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Activo
-        </a>
-        {% endif %}
+        <div class="btn-group" role="group">
+            {% if perms.inventario.add_activo %}
+            <a href="{% url 'inventario:crear' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Activo
+            </a>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalImportarActivos" title="Importar activos desde Excel">
+                <i class="fas fa-file-import"></i> Importar Activos
+            </button>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Filtros -->
@@ -129,31 +134,408 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de Importación de Activos -->
+<div class="modal fade" id="modalImportarActivos" tabindex="-1" aria-labelledby="modalImportarActivosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h1 class="modal-title fs-5" id="modalImportarActivosLabel">
+                    <i class="fas fa-file-import"></i> Importar Activos desde Excel
+                </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Paso 1: Instrucciones y descarga de plantilla -->
+                <div id="paso1" class="paso-importacion">
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="fas fa-info-circle"></i> Instrucciones de Importación</h6>
+                        <ol class="mb-0">
+                            <li>Descargar la plantilla de Excel haciendo clic en el botón de abajo</li>
+                            <li>Llenar los datos de los activos siguiendo las instrucciones en la plantilla</li>
+                            <li>Seleccionar el archivo completado y hacer clic en "Importar"</li>
+                            <li>Revisar el resultado de la importación</li>
+                        </ol>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <a href="{% url 'inventario:descargar_plantilla' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-download"></i> Descargar Plantilla de Excel
+                        </a>
+                    </div>
+
+                    <div class="mb-3 text-center text-muted">
+                        <small>
+                            <strong>Nota:</strong> La plantilla incluye una lista de los valores válidos para cada campo
+                            (tipos de activos, categorías, marcas, estados, ubicaciones, etc.)
+                        </small>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="fw-bold mb-3">Seleccionar archivo para importar:</h6>
+                </div>
+
+                <!-- Formulario de importación -->
+                <form id="formularioImportacion" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Área de Drag & Drop -->
+                    <div id="areaDragDrop" class="border-2 border-dashed p-4 text-center mb-3 bg-light cursor-pointer" style="border-radius: 8px; border: 2px dashed #0d6efd; transition: all 0.3s ease;">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3" style="display: block;"></i>
+                        <h6 class="fw-bold mb-1">Arrastra tu archivo aquí</h6>
+                        <p class="text-muted mb-2">o haz clic para seleccionar</p>
+                        <small class="text-muted d-block">Archivo Excel (.xlsx, .xls) - Máximo 5MB</small>
+                        <input type="file" id="archivoImportacion" name="archivo" accept=".xlsx,.xls" style="display: none;">
+                    </div>
+
+                    <!-- Información del archivo seleccionado -->
+                    <div id="infoArchivo" class="alert alert-info d-none">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-excel text-success"></i>
+                                <strong id="nombreArchivo"></strong>
+                                <br>
+                                <small id="tamanoArchivo" class="text-muted"></small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnCambiarArchivo">
+                                <i class="fas fa-times"></i> Cambiar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Indicador de progreso -->
+                    <div id="progreso" class="d-none">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <span>Procesando archivo...</span>
+                    </div>
+                </form>
+
+                <!-- Resultados de la importación -->
+                <div id="resultadosImportacion" class="d-none">
+                    <div id="alertaResultados"></div>
+                    
+                    <div id="detalleResultados" class="mb-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+                <button type="button" id="btnImportar" class="btn btn-success d-none">
+                    <i class="fas fa-upload"></i> Importar Activos
+                </button>
+                <button type="button" id="btnNuevaImportacion" class="btn btn-primary d-none">
+                    <i class="fas fa-plus"></i> Nueva Importación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 $(document).ready(function() {
-    var table = $('#tablaActivos').DataTable({
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
-    });
-
-    $('#filterBuscar').on('keyup', function() {
-        table.search(this.value).draw();
-    });
-
-    $('#filterEstado').on('change', function() {
-        table.column(3).search(this.value).draw();
-    });
-
-    $('#filterTipo').on('change', function() {
-        table.column(1).search(this.value).draw();
-    });
-
+    // Función para filtrar tabla sin DataTables (para evitar errores)
+    function filtrarTabla() {
+        const buscar = $('#filterBuscar').val().toLowerCase();
+        const estado = $('#filterEstado').val().toLowerCase();
+        const tipo = $('#filterTipo').val().toLowerCase();
+        
+        $('#tablaActivos tbody tr').each(function() {
+            let mostrar = true;
+            
+            // Buscar en toda la fila
+            if (buscar && $(this).text().toLowerCase().indexOf(buscar) === -1) {
+                mostrar = false;
+            }
+            
+            // Filtro Estado (columna 3)
+            if (estado && $(this).find('td').eq(3).text().toLowerCase().indexOf(estado) === -1) {
+                mostrar = false;
+            }
+            
+            // Filtro Tipo (columna 1)
+            if (tipo && $(this).find('td').eq(1).text().toLowerCase().indexOf(tipo) === -1) {
+                mostrar = false;
+            }
+            
+            $(this).toggle(mostrar);
+        });
+    }
+    
+    // Eventos de filtros
+    $('#filterBuscar').on('keyup', filtrarTabla);
+    $('#filterEstado').on('change', filtrarTabla);
+    $('#filterTipo').on('change', filtrarTabla);
+    
+    // Botón limpiar
     $('#btnLimpiar').on('click', function() {
         $('#filterBuscar').val('');
         $('#filterEstado, #filterTipo').val('');
-        table.search('').columns().search('').draw();
+        filtrarTabla();
+    });
+
+    // ========== FUNCIONALIDAD DE IMPORTACIÓN ==========
+    
+    const areaDragDrop = $('#areaDragDrop');
+    const inputArchivo = $('#archivoImportacion');
+    const infoArchivo = $('#infoArchivo');
+    const progreso = $('#progreso');
+    const btnImportar = $('#btnImportar');
+    const btnCambiarArchivo = $('#btnCambiarArchivo');
+    const btnNuevaImportacion = $('#btnNuevaImportacion');
+    const formularioImportacion = $('#formularioImportacion');
+    const paso1 = $('#paso1');
+    const resultadosImportacion = $('#resultadosImportacion');
+    const alertaResultados = $('#alertaResultados');
+    const detalleResultados = $('#detalleResultados');
+
+    let archivoSeleccionado = null;
+
+    // Drag & Drop
+    areaDragDrop.on('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'background-color': '#e7f1ff',
+            'border-color': '#0d6efd'
+        });
+    });
+
+    areaDragDrop.on('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'background-color': '',
+            'border-color': '#0d6efd'
+        });
+    });
+
+    areaDragDrop.on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'background-color': '',
+            'border-color': '#0d6efd'
+        });
+
+        const files = e.originalEvent.dataTransfer.files;
+        if (files.length > 0) {
+            const archivo = files[0];
+            validarYSeleccionarArchivo(archivo);
+        }
+    });
+
+    // Clic en el área
+    areaDragDrop.on('click', function() {
+        inputArchivo.click();
+    });
+
+    // Cambio en el input
+    inputArchivo.on('change', function() {
+        if (this.files.length > 0) {
+            validarYSeleccionarArchivo(this.files[0]);
+        }
+    });
+
+    // Botón cambiar archivo
+    btnCambiarArchivo.on('click', function() {
+        archivoSeleccionado = null;
+        inputArchivo.val('');
+        infoArchivo.addClass('d-none');
+        btnImportar.addClass('d-none');
+        areaDragDrop.removeClass('d-none');
+    });
+
+    // Validar y seleccionar archivo
+    function validarYSeleccionarArchivo(archivo) {
+        // Validar extensión
+        const extensionesValidas = ['xlsx', 'xls'];
+        const extension = archivo.name.split('.').pop().toLowerCase();
+        
+        if (!extensionesValidas.includes(extension)) {
+            alert('Por favor, selecciona un archivo Excel (.xlsx o .xls)');
+            return;
+        }
+
+        // Validar tamaño (5MB)
+        if (archivo.size > 5 * 1024 * 1024) {
+            alert('El archivo no debe superar 5MB');
+            return;
+        }
+
+        // Archivo válido
+        archivoSeleccionado = archivo;
+        mostrarInfoArchivo(archivo);
+    }
+
+    // Mostrar información del archivo
+    function mostrarInfoArchivo(archivo) {
+        $('#nombreArchivo').text(archivo.name);
+        $('#tamanoArchivo').text('Tamaño: ' + (archivo.size / 1024).toFixed(2) + ' KB');
+        
+        infoArchivo.removeClass('d-none');
+        areaDragDrop.addClass('d-none');
+        btnImportar.removeClass('d-none');
+    }
+
+    // Importar activos
+    btnImportar.on('click', function() {
+        if (!archivoSeleccionado) {
+            alert('Por favor, selecciona un archivo');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('archivo', archivoSeleccionado);
+        formData.append('csrfmiddlewaretoken', $('[name=csrfmiddlewaretoken]').val());
+
+        // Mostrar progreso
+        btnImportar.prop('disabled', true);
+        progreso.removeClass('d-none');
+
+        // Enviar archivo
+        $.ajax({
+            url: '{% url "inventario:importar" %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(respuesta) {
+                mostrarResultados(respuesta);
+                recargarTabla();
+            },
+            error: function(xhr) {
+                let mensaje = 'Error al procesar el archivo';
+                if (xhr.responseJSON) {
+                    mensaje = xhr.responseJSON.mensaje || mensaje;
+                }
+                mostrarResultadosError(mensaje);
+            },
+            complete: function() {
+                progreso.addClass('d-none');
+                btnImportar.prop('disabled', false);
+            }
+        });
+    });
+
+    // Mostrar resultados
+    function mostrarResultados(respuesta) {
+        paso1.addClass('d-none');
+        resultadosImportacion.removeClass('d-none');
+        btnImportar.addClass('d-none');
+        btnNuevaImportacion.removeClass('d-none');
+
+        let html = '';
+
+        // Alerta resumen
+        if (respuesta.success) {
+            if (respuesta.activos_creados > 0) {
+                html += `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> <strong>¡Éxito!</strong> Se importaron <strong>${respuesta.activos_creados}</strong> activo(s) correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+            }
+
+            if (respuesta.total_errores > 0) {
+                html += `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> <strong>Errores encontrados:</strong> ${respuesta.total_errores} fila(s) no se pudieron procesar.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+            }
+
+            if (respuesta.total_advertencias > 0) {
+                html += `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle"></i> <strong>Advertencias:</strong> ${respuesta.total_advertencias} advertencia(s) durante la importación.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+            }
+        }
+
+        alertaResultados.html(html);
+
+        // Detalles
+        let detalleHtml = '';
+
+        if (respuesta.errores && respuesta.errores.length > 0) {
+            detalleHtml += '<div class="mb-3"><h6 class="fw-bold text-danger"><i class="fas fa-times-circle"></i> Errores:</h6>';
+            detalleHtml += '<ul class="list-group list-group-sm">';
+            respuesta.errores.forEach(function(error) {
+                detalleHtml += `<li class="list-group-item list-group-item-danger small">${error}</li>`;
+            });
+            detalleHtml += '</ul></div>';
+        }
+
+        if (respuesta.advertencias && respuesta.advertencias.length > 0) {
+            detalleHtml += '<div class="mb-3"><h6 class="fw-bold text-warning"><i class="fas fa-exclamation-triangle"></i> Advertencias:</h6>';
+            detalleHtml += '<ul class="list-group list-group-sm">';
+            respuesta.advertencias.forEach(function(advertencia) {
+                detalleHtml += `<li class="list-group-item list-group-item-warning small">${advertencia}</li>`;
+            });
+            detalleHtml += '</ul></div>';
+        }
+
+        if (detalleHtml) {
+            detalleResultados.html(detalleHtml);
+        }
+    }
+
+    // Mostrar error
+    function mostrarResultadosError(mensaje) {
+        paso1.addClass('d-none');
+        resultadosImportacion.removeClass('d-none');
+        btnImportar.addClass('d-none');
+        btnNuevaImportacion.removeClass('d-none');
+
+        const html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-times-circle"></i> <strong>Error:</strong> ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
+
+        alertaResultados.html(html);
+    }
+
+    // Nueva importación
+    btnNuevaImportacion.on('click', function() {
+        // Resetear formulario
+        formularioImportacion[0].reset();
+        archivoSeleccionado = null;
+        
+        // Mostrar paso 1
+        paso1.removeClass('d-none');
+        resultadosImportacion.addClass('d-none');
+        btnImportar.addClass('d-none');
+        btnNuevaImportacion.addClass('d-none');
+        infoArchivo.addClass('d-none');
+        areaDragDrop.removeClass('d-none');
+        alertaResultados.html('');
+        detalleResultados.html('');
+    });
+
+    // Recargar tabla
+    function recargarTabla() {
+        setTimeout(function() {
+            location.reload(); // Recargar página para actualizar la tabla
+        }, 1000);
+    }
+
+    // Resetear modal al cerrar
+    $('#modalImportarActivos').on('hidden.bs.modal', function() {
+        formularioImportacion[0].reset();
+        archivoSeleccionado = null;
+        paso1.removeClass('d-none');
+        resultadosImportacion.addClass('d-none');
+        btnImportar.addClass('d-none');
+        btnNuevaImportacion.addClass('d-none');
+        infoArchivo.addClass('d-none');
+        areaDragDrop.removeClass('d-none');
+        alertaResultados.html('');
+        detalleResultados.html('');
+        progreso.addClass('d-none');
     });
 });
 </script>

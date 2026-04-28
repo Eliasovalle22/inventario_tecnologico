@@ -2,6 +2,7 @@ from django import forms
 from .models import Activo
 from catalogos.models import Categoria, Marca, Ubicacion, Estado, TipoActivo
 from django.contrib.auth.models import User
+import openpyxl
 
 class ActivoForm(forms.ModelForm):
     class Meta:
@@ -68,3 +69,26 @@ class ActivoForm(forms.ModelForm):
         self.fields['valor_compra'].required = False
         self.fields['proveedor'].required = False
         self.fields['factura'].required = False
+
+
+class ImportarActivosForm(forms.Form):
+    archivo = forms.FileField(
+        label='Archivo Excel',
+        required=True,
+        widget=forms.FileInput(attrs={
+            'accept': '.xlsx,.xls',
+            'class': 'form-control',
+            'id': 'archivoImportacion'
+        })
+    )
+    
+    def clean_archivo(self):
+        archivo = self.cleaned_data.get('archivo')
+        if archivo:
+            # Validar que sea un archivo Excel
+            if not archivo.name.endswith(('.xlsx', '.xls')):
+                raise forms.ValidationError("El archivo debe ser un archivo Excel (.xlsx o .xls)")
+            # Validar tamaño (máximo 5MB)
+            if archivo.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("El archivo no debe superar 5MB")
+        return archivo

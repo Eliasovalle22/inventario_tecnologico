@@ -18,4 +18,8 @@ urlpatterns = [
     
     # Eliminación de activos
     path('<int:pk>/eliminar/', views.eliminar_activo, name='eliminar'),
+    
+    # Importación de activos
+    path('descargar-plantilla/', views.descargar_plantilla_activos, name='descargar_plantilla'),
+    path('importar/', views.importar_activos, name='importar'),
 ]
