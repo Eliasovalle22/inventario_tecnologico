@@ -307,6 +307,34 @@ def datos_grafico_mensual(request):
     }
     return JsonResponse(data)
 
+@login_required
+def datos_grafico_tipos(request):
+    """Datos para gráfico de activos por tipo"""
+    from django.http import JsonResponse
+    from catalogos.models import TipoActivo
+    
+    tipos = TipoActivo.objects.annotate(
+        total=Count('activo')
+    ).filter(total__gt=0).order_by('-total')
+    
+    # Paleta de colores profesional
+    colores = [
+        '#1A73E8', '#4285F4', '#5B9CF5', '#85C1E2', '#ADD8E6',  # Azules
+        '#DC3912', '#E8524D', '#F4744E', '#FF6B6B', '#FF8C8C',  # Rojos
+        '#FF9800', '#FFB74D', '#FFCC80', '#FFD54F', '#FFEB3B',  # Naranjas/Amarillos
+        '#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#E8F5E9',  # Verdes
+        '#AB47BC', '#BA68C8', '#CE93D8', '#E1BEE7', '#F3E5F5',  # Púrpuras
+        '#29B6F6', '#42A5F5', '#64B5F6', '#90CAF9', '#BBDEFB',  # Azul claro
+        '#7E57C2', '#9575CD', '#B39DDB', '#D1C4E9', '#EDE7F6',  # Púrpura
+    ]
+    
+    data = {
+        'labels': [t.nombre for t in tipos],
+        'values': [t.total for t in tipos],
+        'colors': [colores[i % len(colores)] for i in range(len(tipos))]
+    }
+    return JsonResponse(data)
+
 # ============= REPORTE DE CATEGORÍAS =============
 @login_required
 def reporte_categorias(request):

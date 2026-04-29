@@ -122,35 +122,6 @@
     </div>
     {% endif %}
 
-    <div class="row">
-        <!-- ============ Gráfico de categorías ============ -->
-        {% if perms.inventario.view_activo %}
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Activos por Categoría</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="categoriasChart"></canvas>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- ============ Gráfico de tipos ============ -->
-        {% if perms.inventario.view_activo %}
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Activos por Tipo</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="tiposChart"></canvas>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
     <!-- ============ Activos recientes ============ -->
     {% if perms.inventario.view_activo %}
     <div class="row">

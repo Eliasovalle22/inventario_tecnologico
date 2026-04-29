@@ -32,5 +32,6 @@ urlpatterns = [
     # Gráficos
     path('graficos/estados/', views.datos_grafico_estados, name='grafico_estados'),
     path('graficos/categorias/', views.datos_grafico_categorias, name='grafico_categorias'),
+    path('graficos/tipos/', views.datos_grafico_tipos, name='grafico_tipos'),
     path('graficos/mensual/', views.datos_grafico_mensual, name='grafico_mensual'),
 ]

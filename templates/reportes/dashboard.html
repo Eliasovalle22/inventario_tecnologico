@@ -4,83 +4,99 @@
 {% block title %}Dashboard de Reportes{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1 class="mb-4"><i class="fas fa-chart-bar"></i> Dashboard de Reportes</h1>
+<div class="container-fluid" style="padding: 20px;">
+    <!-- Encabezado -->
+    <div class="mb-5">
+        <h1 style="font-weight: 700; color: #2c3e50; font-size: 28px; margin-bottom: 5px;">
+            <i class="fas fa-chart-bar" style="color: #1A73E8; margin-right: 10px;"></i> Dashboard de Reportes
+        </h1>
+        <p class="text-muted" style="font-size: 14px; margin: 0;">
+            Visualiza un resumen completo de tu inventario tecnológico
+        </p>
+    </div>
 
     <!-- Tarjetas de resumen -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card" style="border-left: 3px solid var(--app-primary);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+    <div class="row mb-5">
+        <!-- Total Activos -->
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+            <div class="card stat-card" style="border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; overflow: hidden;">
+                <div style="height: 4px; background: linear-gradient(90deg, #1A73E8, #4285F4);"></div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="text-muted small">Total Activos</div>
-                            <div class="h2 mt-1 mb-0">{{ total_activos }}</div>
+                            <div style="font-size: 12px; font-weight: 600; color: #7b809a; text-transform: uppercase; letter-spacing: 0.5px;">Total Activos</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-top: 8px;">{{ total_activos }}</div>
                         </div>
-                        <div class="stat-icon" style="color: var(--app-primary);">
-                            <i class="fas fa-microchip"></i>
+                        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(26, 115, 232, 0.1), rgba(26, 115, 232, 0.05)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-microchip" style="color: #1A73E8; font-size: 24px;"></i>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a class="small" href="{% url 'reportes:inventario' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
+                <div class="card-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 12px 16px;">
+                    <a href="{% url 'reportes:inventario' %}" style="color: #1A73E8; text-decoration: none; font-size: 12px; font-weight: 600;">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card" style="border-left: 3px solid var(--app-success);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+
+        <!-- Asignaciones Activas -->
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+            <div class="card stat-card" style="border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; overflow: hidden;">
+                <div style="height: 4px; background: linear-gradient(90deg, #66BB6A, #81C784);"></div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="text-muted small">Asignaciones Activas</div>
-                            <div class="h2 mt-1 mb-0">{{ asignaciones_activas }}</div>
+                            <div style="font-size: 12px; font-weight: 600; color: #7b809a; text-transform: uppercase; letter-spacing: 0.5px;">Asignaciones Activas</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-top: 8px;">{{ asignaciones_activas }}</div>
                         </div>
-                        <div class="stat-icon" style="color: var(--app-success);">
-                            <i class="fas fa-hand-holding"></i>
+                        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(102, 187, 106, 0.1), rgba(102, 187, 106, 0.05)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-hand-holding" style="color: #66BB6A; font-size: 24px;"></i>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a class="small" href="{% url 'reportes:asignaciones' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
+                <div class="card-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 12px 16px;">
+                    <a href="{% url 'reportes:asignaciones' %}" style="color: #66BB6A; text-decoration: none; font-size: 12px; font-weight: 600;">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card" style="border-left: 3px solid var(--app-warning);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+
+        <!-- Asignaciones Vencidas -->
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+            <div class="card stat-card" style="border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; overflow: hidden;">
+                <div style="height: 4px; background: linear-gradient(90deg, #FFB74D, #FFA726);"></div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="text-muted small">Asignaciones Vencidas</div>
-                            <div class="h2 mt-1 mb-0">{{ asignaciones_vencidas }}</div>
+                            <div style="font-size: 12px; font-weight: 600; color: #7b809a; text-transform: uppercase; letter-spacing: 0.5px;">Asignaciones Vencidas</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-top: 8px;">{{ asignaciones_vencidas }}</div>
                         </div>
-                        <div class="stat-icon" style="color: var(--app-warning);">
-                            <i class="fas fa-exclamation-triangle"></i>
+                        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(255, 183, 77, 0.1), rgba(255, 183, 77, 0.05)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-exclamation-triangle" style="color: #FFB74D; font-size: 24px;"></i>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a class="small" href="{% url 'asignaciones:lista' %}?estado=vencidas">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
+                <div class="card-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 12px 16px;">
+                    <a href="{% url 'asignaciones:lista' %}?estado=vencidas" style="color: #FFB74D; text-decoration: none; font-size: 12px; font-weight: 600;">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card" style="border-left: 3px solid var(--app-info);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+
+        <!-- Movimientos 30 días -->
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+            <div class="card stat-card" style="border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; overflow: hidden;">
+                <div style="height: 4px; background: linear-gradient(90deg, #29B6F6, #42A5F5);"></div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="text-muted small">Movimientos (30 días)</div>
-                            <div class="h2 mt-1 mb-0">{{ movimientos_30d }}</div>
+                            <div style="font-size: 12px; font-weight: 600; color: #7b809a; text-transform: uppercase; letter-spacing: 0.5px;">Movimientos (30 días)</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-top: 8px;">{{ movimientos_30d }}</div>
                         </div>
-                        <div class="stat-icon" style="color: var(--app-info);">
-                            <i class="fas fa-history"></i>
+                        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(41, 182, 246, 0.1), rgba(41, 182, 246, 0.05)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-history" style="color: #29B6F6; font-size: 24px;"></i>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a class="small" href="{% url 'movimientos:lista' %}">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
+                <div class="card-footer" style="background-color: #f8f9fa; border-top: 1px solid #e9ecef; padding: 12px 16px;">
+                    <a href="{% url 'movimientos:lista' %}" style="color: #29B6F6; text-decoration: none; font-size: 12px; font-weight: 600;">Ver detalles <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -88,69 +104,114 @@
 
     <!-- Gráficos -->
     <div class="row">
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-pie me-1"></i>
-                    Activos por Estado
+        <!-- Activos por Estado -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card chart-card h-100" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                <div class="card-header bg-light" style="border-bottom: 2px solid #f8f9fa; padding: 18px; border-radius: 7px 7px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 600; color: #2c3e50;">
+                        <i class="fas fa-chart-pie me-2" style="color: #1A73E8;"></i>Activos por Estado
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <canvas id="estadosChart" width="100%" height="40"></canvas>
+                <div class="card-body p-4" style="position: relative;">
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="estadosChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-bar me-1"></i>
-                    Activos por Categoría
+
+        <!-- Activos por Categoría -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card chart-card h-100" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                <div class="card-header bg-light" style="border-bottom: 2px solid #f8f9fa; padding: 18px; border-radius: 7px 7px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 600; color: #2c3e50;">
+                        <i class="fas fa-chart-bar me-2" style="color: #1A73E8;"></i>Activos por Categoría
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <canvas id="categoriasChart" width="100%" height="40"></canvas>
+                <div class="card-body p-4" style="position: relative;">
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="categoriasChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-line me-1"></i>
-                    Movimientos Mensuales
+        <!-- Activos por Tipo -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card chart-card h-100" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                <div class="card-header bg-light" style="border-bottom: 2px solid #f8f9fa; padding: 18px; border-radius: 7px 7px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 600; color: #2c3e50;">
+                        <i class="fas fa-list me-2" style="color: #FF6B6B;"></i>Activos por Tipo
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <canvas id="movimientosChart" width="100%" height="40"></canvas>
+                <div class="card-body p-4" style="position: relative;">
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="tiposChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-map-marker-alt me-1"></i>
-                    Activos por Ubicación
+
+        <!-- Movimientos Mensuales -->
+        <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="card chart-card h-100" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                <div class="card-header bg-light" style="border-bottom: 2px solid #f8f9fa; padding: 18px; border-radius: 7px 7px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 600; color: #2c3e50;">
+                        <i class="fas fa-chart-line me-2" style="color: #66BB6A;"></i>Movimientos Mensuales
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <table class="table table-sm">
-                        <thead>
+                <div class="card-body p-4" style="position: relative;">
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="movimientosChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activos por Ubicación -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card" style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #e9ecef; border-radius: 8px;">
+                <div class="card-header bg-light" style="border-bottom: 2px solid #f8f9fa; padding: 18px; border-radius: 7px 7px 0 0;">
+                    <h6 class="mb-0" style="font-weight: 600; color: #2c3e50;">
+                        <i class="fas fa-map-marker-alt me-2" style="color: #AB47BC;"></i>Activos por Ubicación
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #f8f9fa; border-top: 2px solid #e9ecef;">
                             <tr>
-                                <th>UBICACIÓN</th>
-                                <th>CANTIDAD</th>
-                                <th>%</th>
+                                <th style="font-weight: 600; color: #2c3e50; border: none; padding: 12px 15px;">UBICACIÓN</th>
+                                <th style="font-weight: 600; color: #2c3e50; border: none; padding: 12px 15px; text-align: center;">CANTIDAD</th>
+                                <th style="font-weight: 600; color: #2c3e50; border: none; padding: 12px 15px; text-align: center;">PORCENTAJE</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in activos_por_ubicacion %}
-                            <tr>
-                                <td>{{ item.nombre }}</td>
-                                <td>{{ item.total }}</td>
-                                <td>
-                                    {% widthratio item.total total_activos 100 %}%
+                            <tr style="border-bottom: 1px solid #e9ecef; transition: background-color 0.2s ease;">
+                                <td style="padding: 12px 15px; vertical-align: middle;">
+                                    <span style="font-weight: 500; color: #2c3e50;">{{ item.nombre }}</span>
+                                </td>
+                                <td style="padding: 12px 15px; text-align: center;">
+                                    <span style="display: inline-block; background-color: #e3f2fd; color: #1A73E8; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">
+                                        {{ item.total }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px 15px; text-align: center;">
+                                    <div style="width: 100%; background-color: #e9ecef; height: 6px; border-radius: 3px; overflow: hidden;">
+                                        <div style="width: {% widthratio item.total total_activos 100 %}%; height: 100%; background: linear-gradient(90deg, #1A73E8, #4285F4); transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <small style="color: #7b809a; font-weight: 500;">{% widthratio item.total total_activos 100 %}%</small>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center">Sin datos</td>
+                                <td colspan="3" class="text-center py-4" style="color: #7b809a;">
+                                    <i class="fas fa-inbox me-2"></i>Sin datos disponibles
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -160,73 +221,256 @@
         </div>
     </div>
 </div>
+
+<style>
+    .chart-card {
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+        transform: translateY(-2px);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+    }
+
+    /* Mejorar la tabla con hover effect */
+    .table tbody tr:hover {
+        background-color: rgba(26, 115, 232, 0.04) !important;
+    }
+</style>
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-    // Cargar datos para gráficos
+    // Configuración global de Chart.js
+    Chart.defaults.font.family = "'Segoe UI', 'Roboto', sans-serif";
+    Chart.defaults.color = '#7b809a';
+    
+    // Función auxiliar para crear gradientes
+    function createGradient(ctx, color1, color2) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, color1);
+        gradient.addColorStop(1, color2);
+        return gradient;
+    }
+
+    // ===== GRÁFICO: Activos por Estado =====
     fetch('{% url "reportes:grafico_estados" %}')
         .then(response => response.json())
         .then(data => {
-            new Chart(document.getElementById('estadosChart'), {
+            const ctx = document.getElementById('estadosChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: data.labels,
                     datasets: [{
                         data: data.values,
                         backgroundColor: data.colors,
-                        borderWidth: 1
+                        borderColor: '#fff',
+                        borderWidth: 3,
+                        hoverOffset: 8
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
                     plugins: {
-                        legend: { 
+                        legend: {
                             position: 'bottom',
-                            labels: { color: '#7b809a' }
+                            labels: {
+                                color: '#2c3e50',
+                                font: { size: 12, weight: '500' },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                            padding: 12,
+                            borderRadius: 6,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            displayColors: true,
+                            borderColor: 'rgba(255,255,255,0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed.y + ' activos';
+                                }
+                            }
                         }
                     }
                 }
             });
         });
 
+    // ===== GRÁFICO: Activos por Categoría =====
     fetch('{% url "reportes:grafico_categorias" %}')
         .then(response => response.json())
         .then(data => {
-            new Chart(document.getElementById('categoriasChart'), {
+            const ctx = document.getElementById('categoriasChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.labels,
                     datasets: [{
                         label: 'Cantidad de activos',
                         data: data.values,
-                        backgroundColor: '#1A73E8',
-                        borderRadius: 6,
-                        borderWidth: 0
+                        backgroundColor: function(context) {
+                            const colors = ['#1A73E8', '#4285F4', '#5B9CF5', '#85C1E2', '#ADD8E6', '#5B9CF5', '#4285F4', '#1A73E8', '#5B9CF5', '#85C1E2'];
+                            return colors[context.dataIndex % colors.length];
+                        },
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        borderWidth: 0,
+                        hoverBackgroundColor: '#1359D0',
+                        hoverBorderRadius: 8
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            ticks: { stepSize: 1, color: '#7b809a' },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        y: {
+                            ticks: {
+                                color: '#2c3e50',
+                                font: { size: 11, weight: '500' }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
                         },
                         x: {
-                            ticks: { color: '#7b809a' },
-                            grid: { display: false }
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#7b809a',
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)',
+                                drawBorder: false,
+                                drawTicks: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                            padding: 12,
+                            borderRadius: 6,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            displayColors: true,
+                            borderColor: 'rgba(255,255,255,0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + ' activos';
+                                }
+                            }
                         }
                     }
                 }
             });
         });
 
+    // ===== GRÁFICO: Activos por Tipo =====
+    fetch('{% url "reportes:grafico_tipos" %}')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('tiposChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Cantidad de activos',
+                        data: data.values,
+                        backgroundColor: data.colors,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        borderWidth: 0,
+                        hoverOpacity: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#7b809a',
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)',
+                                drawBorder: false,
+                                drawTicks: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#2c3e50',
+                                font: { size: 11, weight: '500' },
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                            padding: 12,
+                            borderRadius: 6,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            displayColors: true,
+                            borderColor: 'rgba(255,255,255,0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' activos';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+    // ===== GRÁFICO: Movimientos Mensuales =====
     fetch('{% url "reportes:grafico_mensual" %}')
         .then(response => response.json())
         .then(data => {
-            new Chart(document.getElementById('movimientosChart'), {
+            const ctx = document.getElementById('movimientosChart').getContext('2d');
+            const gradient = createGradient(ctx, 'rgba(102, 187, 106, 0.2)', 'rgba(102, 187, 106, 0.01)');
+            
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.labels,
@@ -234,23 +478,71 @@
                         label: 'Movimientos',
                         data: data.values,
                         borderColor: '#66BB6A',
-                        backgroundColor: 'rgba(102, 187, 106, 0.08)',
+                        backgroundColor: gradient,
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: '#66BB6A'
+                        pointBackgroundColor: '#66BB6A',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#5ca456',
+                        borderWidth: 3,
+                        hoverBorderWidth: 3
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            ticks: { stepSize: 1, color: '#7b809a' },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#7b809a',
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)',
+                                drawBorder: false,
+                                drawTicks: false
+                            }
                         },
                         x: {
-                            ticks: { color: '#7b809a' },
-                            grid: { display: false }
+                            ticks: {
+                                color: '#2c3e50',
+                                font: { size: 11, weight: '500' }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#2c3e50',
+                                font: { size: 12, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                            padding: 12,
+                            borderRadius: 6,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            displayColors: true,
+                            borderColor: 'rgba(255,255,255,0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' movimientos';
+                                }
+                            }
                         }
                     }
                 }
